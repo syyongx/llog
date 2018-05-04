@@ -35,7 +35,7 @@ func (f *File) Handle(record *types.Record) bool {
 		return false
 	}
 	if f.processors != nil {
-		record = f.ProcessRecord(record)
+		f.ProcessRecord(record)
 	}
 	var err error
 	record.Formatted, err = f.GetFormatter().Format(record)

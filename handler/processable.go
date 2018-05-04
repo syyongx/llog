@@ -20,10 +20,8 @@ func (p *Processable) PopProcessor() processor.Processor {
 }
 
 // Processes a record.
-func (p *Processable) ProcessRecord(record *types.Record) *types.Record {
+func (p *Processable) ProcessRecord(record *types.Record){
 	for _, v := range p.processors {
-		record = v(record)
+		v(record)
 	}
-
-	return record
 }

@@ -28,7 +28,7 @@ func (b *Buffer) Handle(record *types.Record) bool {
 		}
 	}
 	if b.processors != nil {
-		record = b.ProcessRecord(record)
+		b.ProcessRecord(record)
 	}
 
 	return false == b.bubble
