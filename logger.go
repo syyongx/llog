@@ -18,18 +18,19 @@ type Logger struct {
 	timezone   string
 }
 
+var levels = map[int]string{
+	types.DEBUG:     "debug",
+	types.INFO:      "info",
+	types.NOTICE:    "notice",
+	types.WARNING:   "warning",
+	types.ERROR:     "error",
+	types.CRITICAL:  "critical",
+	types.ALERT:     "alert",
+	types.EMERGENCY: "emergency",
+}
+
 // new logger
 func NewLogger(name string) *Logger {
-	levels := map[int]string{
-		types.DEBUG:     "debug",
-		types.INFO:      "info",
-		types.NOTICE:    "notice",
-		types.WARNING:   "warning",
-		types.ERROR:     "error",
-		types.CRITICAL:  "critical",
-		types.ALERT:     "alert",
-		types.EMERGENCY: "emergency",
-	}
 	return &Logger{
 		name:   name,
 		levels: levels,
@@ -109,7 +110,8 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 		"level":     level,
 		"levelName": levelName,
 		"channel":   l.name,
-		"datetime":  time.Unix(time.Now().Unix(), 0),
+		"datetime":  time.Now(),
+		"context":   make(map[string]interface{}),
 		"extra":     make(map[string]interface{}),
 	}
 

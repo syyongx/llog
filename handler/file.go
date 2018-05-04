@@ -61,7 +61,7 @@ func (f *File) Write(record types.Record) {
 	defer f.Close()
 }
 
-// Close wreter
+// Close writer
 func (f *File) Close() {
 	f.writer.Close()
 	f.writer = nil
