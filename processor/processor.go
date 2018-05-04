@@ -4,4 +4,4 @@ import (
 	"github.com/syyongx/llog/types"
 )
 
-type Processor func(record *types.Record) *types.Record
+type Processor func(record *types.Record)

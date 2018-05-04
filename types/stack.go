@@ -1,6 +1,6 @@
 package types
 
-import "github.com/kataras/iris/core/errors"
+import "errors"
 
 type Stack []interface{}
 

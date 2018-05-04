@@ -21,5 +21,5 @@ func (f *Formattable) GetFormatter() formatter.IFormatter {
 
 //Gets the default formatter.
 func (f *Formattable) GetDefaultFormatter() formatter.IFormatter {
-	return formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%", time.RFC3339)
+	return formatter.NewLine(formatter.DefaultFormat, time.RFC3339)
 }

@@ -111,7 +111,7 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	record.Datetime = time.Now()
 
 	for _, p := range l.processors {
-		record = p(record)
+		p(record)
 	}
 	for j, h := range l.handlers {
 		if hKey < j {
