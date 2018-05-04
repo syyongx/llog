@@ -1,5 +1,5 @@
-# gospring-log
-Gospring log.
+# llog
+llog.
 
 ## Download & Install
 ```shell
