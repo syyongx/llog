@@ -5,6 +5,7 @@ import (
 	"math"
 	"github.com/syyongx/llog/types"
 	"encoding/json"
+	"time"
 )
 
 // Normalizes incoming records to remove objects/resources so it's easier to dump to various targets
@@ -18,10 +19,17 @@ func NewNormalizer(dateFormat string) *Normalizer {
 	}
 }
 
-//func (n *Normalizer) Format(record types.Record) ([]byte, error) {
-//	return n.Normalize(record, 0)
-//}
+// Set dateFormat
+func (n *Normalizer) SetDateFormat(dateFormat string) {
+	n.dateFormat = dateFormat
+}
 
+// Get dateFormat
+func (n *Normalizer) GetDateFormat() string {
+	return n.dateFormat
+}
+
+// Normalize data
 func (n *Normalizer) Normalize(data interface{}, depth int) interface{} {
 	if depth > 9 {
 		return "Over 9 levels deep, aborting normalization"
@@ -41,6 +49,8 @@ func (n *Normalizer) Normalize(data interface{}, depth int) interface{} {
 			return "NaN"
 		}
 		return data
+	case time.Time:
+		return data.(time.Time).Format(n.dateFormat)
 	case types.Record:
 		normalized := make(types.Record)
 		count := 1

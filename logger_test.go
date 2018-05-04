@@ -6,6 +6,7 @@ import (
 	"github.com/syyongx/llog/handler"
 	"github.com/syyongx/llog/types"
 	"github.com/syyongx/llog/formatter"
+	"time"
 	"os"
 )
 
@@ -15,7 +16,7 @@ func Test1(t *testing.T) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%")
+	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%", time.RFC3339)
 	h.(*handler.File).SetFormatter(f)
 	lr.PushHandler(h)
 	lr.Warning("xxx")

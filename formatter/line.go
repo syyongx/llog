@@ -14,10 +14,12 @@ type Line struct {
 	format string
 }
 
-func NewLine(format string) *Line {
-	return &Line{
+func NewLine(format, dateFormat string) IFormatter {
+	l := &Line{
 		format: format,
 	}
+	l.SetDateFormat(dateFormat)
+	return l
 }
 
 func (l *Line) Format(record types.Record) ([]byte, error) {

@@ -24,8 +24,8 @@ func NewFile(path string, level int, bubble bool, useLocking bool) (IHandler, er
 		useLocking: useLocking,
 		writer:     fd,
 	}
-	f.level = level
-	f.bubble = bubble
+	f.SetLevel(level)
+	f.SetBubble(bubble)
 	return f, nil
 }
 
@@ -45,7 +45,7 @@ func (f *File) Handle(record types.Record) bool {
 
 	f.Write(record)
 
-	return false == f.bubble
+	return false == f.GetBubble()
 }
 
 // HandleBatch

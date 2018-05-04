@@ -91,9 +91,9 @@ func (l *Logger) GetProcessor() []processor.Processor {
 // Adds a log record.
 func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	hKey := -1
-	r := types.Record{"level": level}
+	record := types.Record{"level": level}
 	for i, v := range l.handlers {
-		if v.IsHandling(r) {
+		if v.IsHandling(record) {
 			hKey = i
 		}
 	}
@@ -104,12 +104,12 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	record := types.Record{
+	record = types.Record{
 		"message":   message,
 		"level":     level,
 		"levelName": levelName,
 		"channel":   l.name,
-		"datetime":  time.Unix(time.Now().Unix(), 0).Format(time.RFC3339),
+		"datetime":  time.Unix(time.Now().Unix(), 0),
 		"extra":     make(map[string]interface{}),
 	}
 

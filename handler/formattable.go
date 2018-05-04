@@ -1,6 +1,9 @@
 package handler
 
-import "github.com/syyongx/llog/formatter"
+import (
+	"github.com/syyongx/llog/formatter"
+	"time"
+)
 
 type Formattable struct {
 	formatter formatter.IFormatter
@@ -16,7 +19,7 @@ func (f *Formattable) GetFormatter() formatter.IFormatter {
 	return f.formatter
 }
 
-// Gets the default formatter.
-//func (f *Formattable) GetDefaultFormatter() formatter.IFormatter {
-//	//return formatter.NewLine()
-//}
+//Gets the default formatter.
+func (f *Formattable) GetDefaultFormatter() formatter.IFormatter {
+	return formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%", time.RFC3339)
+}
