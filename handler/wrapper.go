@@ -23,14 +23,14 @@ func (w *Wrapper) IsHandling(record types.Record) bool {
 	return true
 }
 
-func (w *Wrapper) Handle(record types.Record) bool {
+func (w *Wrapper) Handle(record *types.Record) bool {
 	return w.handler.Handle(record)
 }
 
-func (w *Wrapper) HandleBatch(records []types.Record) {
+func (w *Wrapper) HandleBatch(records []*types.Record) {
 }
 
-func (w *Wrapper) Close(record types.Record) {
+func (w *Wrapper) Close(record *types.Record) {
 
 }
 

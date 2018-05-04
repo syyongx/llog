@@ -1,11 +1,11 @@
 package formatter
 
 import (
-	"fmt"
 	"math"
 	"github.com/syyongx/llog/types"
 	"encoding/json"
 	"time"
+	"strconv"
 )
 
 // Normalizes incoming records to remove objects/resources so it's easier to dump to various targets
@@ -29,42 +29,42 @@ func (n *Normalizer) GetDateFormat() string {
 	return n.dateFormat
 }
 
-// Normalize data
-func (n *Normalizer) Normalize(data interface{}, depth int) interface{} {
-	if depth > 9 {
-		return "Over 9 levels deep, aborting normalization"
+// Normalize extra of record
+func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
+	if len(extra) > 1000 {
+		return ""
 	}
-	switch data.(type) {
-	case float32, float64:
-		n := float64(data.(float32))
-		// whether n is an infinity
-		if math.IsInf(n, 0) {
-			if n > 0 {
-				return "INF"
-			} else {
-				return "-INF"
-			}
-		}
-		if math.IsNaN(n) {
-			return "NaN"
-		}
-		return data
-	case time.Time:
-		return data.(time.Time).Format(n.dateFormat)
-	case types.Record:
-		normalized := make(types.Record)
-		count := 1
-		for k, v := range data.(types.Record) {
-			if count ++; count >= 1000 {
-				normalized["..."] = fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.Record)));
-				break
-			}
-			normalized[k] = n.Normalize(v, depth+1)
-		}
-		return normalized
-	}
+	// fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.RecordExtra)));
+	return n.ToJson(extra)
+}
 
-	return data
+// Normalize context of record
+func (n *Normalizer) normalizeContext(ctx types.RecordContext) string {
+	if len(ctx) > 1000 {
+		return ""
+	}
+	return n.ToJson(ctx)
+}
+
+// Normalize float
+func (n *Normalizer) normalizeTime(t time.Time) string {
+	return t.Format(n.dateFormat)
+}
+
+// Normalize float
+func (n *Normalizer) normalizeFloat(f float64) string {
+	// whether n is an infinity
+	if math.IsInf(f, 0) {
+		if f > 0 {
+			return "INF"
+		} else {
+			return "-INF"
+		}
+	}
+	if math.IsNaN(f) {
+		return "NaN"
+	}
+	return strconv.FormatFloat(f, 'G', 30, 64)
 }
 
 // Return the JSON representation of a value

@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+const DefaultFormat = "[%datetime%] %channel%.%levelName%: %message% %context% %extra%\n"
+
 // Formats incoming records into a one-line string
 // This is especially useful for logging to files
 type Line struct {
@@ -15,6 +17,9 @@ type Line struct {
 }
 
 func NewLine(format, dateFormat string) IFormatter {
+	if format == "" {
+		format = DefaultFormat
+	}
 	l := &Line{
 		format: format,
 	}
@@ -22,22 +27,33 @@ func NewLine(format, dateFormat string) IFormatter {
 	return l
 }
 
-func (l *Line) Format(record types.Record) ([]byte, error) {
+func (l *Line) Format(record *types.Record) ([]byte, error) {
 	output := l.format
 
-	vars := l.Normalize(record, 0).(types.Record)
-	for k, v := range vars {
-		placeholder := "%" + k + "%"
-		if strings.Contains(output, placeholder) {
-			output = strings.Replace(output, placeholder, l.String(v), 1)
-		}
+	if strings.Contains(output, "%datetime%") {
+		output = strings.Replace(output, "%datetime%", l.normalizeTime(record.Datetime), -1)
+	}
+	if strings.Contains(output, "%channel%") {
+		output = strings.Replace(output, "%channel%", record.Channel, -1)
+	}
+	if strings.Contains(output, "%levelName%") {
+		output = strings.Replace(output, "%levelName%", record.LevelName, -1)
+	}
+	if strings.Contains(output, "%message%") {
+		output = strings.Replace(output, "%message%", record.Message, -1)
+	}
+	if strings.Contains(output, "%context%") {
+		output = strings.Replace(output, "%context%", l.normalizeContext(record.Context), -1)
+	}
+	if strings.Contains(output, "%extra%") {
+		output = strings.Replace(output, "%extra%", l.normalizeExtra(record.Extra), -1)
 	}
 
 	return []byte(output), nil
 }
 
 //
-func (l *Line) FormatBatch(records []types.Record) ([]byte, error) {
+func (l *Line) FormatBatch(records []*types.Record) ([]byte, error) {
 	var message []byte
 	for _, record := range records {
 		entry, err := l.Format(record)

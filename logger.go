@@ -92,7 +92,7 @@ func (l *Logger) GetProcessor() []processor.Processor {
 // Adds a log record.
 func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	hKey := -1
-	record := types.Record{"level": level}
+	record := &types.Record{Level: level}
 	for i, v := range l.handlers {
 		if v.IsHandling(record) {
 			hKey = i
@@ -105,15 +105,10 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	record = types.Record{
-		"message":   message,
-		"level":     level,
-		"levelName": levelName,
-		"channel":   l.name,
-		"datetime":  time.Now(),
-		"context":   make(map[string]interface{}),
-		"extra":     make(map[string]interface{}),
-	}
+	record.Message = message
+	record.LevelName = levelName
+	record.Channel = l.name
+	record.Datetime = time.Now()
 
 	for _, p := range l.processors {
 		record = p(record)
@@ -158,37 +153,37 @@ func (l *Logger) Log(level int, message string) {
 
 // Adds a log record at the DEBUG level.
 func (l *Logger) Debug(message interface{}) {
-	l.AddRecord(types.DEBUG, fmt.Sprintln(message))
+	l.AddRecord(types.DEBUG, l.String(message))
 }
 
 // Adds a log record at the INFO level.
 func (l *Logger) Info(message interface{}) {
-	l.AddRecord(types.INFO, fmt.Sprintln(message))
+	l.AddRecord(types.INFO, l.String(message))
 }
 
 // Adds a log record at the NOTICE level.
 func (l *Logger) Notice(message interface{}) {
-	l.AddRecord(types.NOTICE, fmt.Sprintln(message))
+	l.AddRecord(types.NOTICE, l.String(message))
 }
 
 // Adds a log record at the WARNING level.
 func (l *Logger) Warning(message interface{}) {
-	l.AddRecord(types.WARNING, fmt.Sprintln(message))
+	l.AddRecord(types.WARNING, l.String(message))
 }
 
 // Adds a log record at the ERROR level.
 func (l *Logger) Error(message interface{}) {
-	l.AddRecord(types.ERROR, fmt.Sprintln(message))
+	l.AddRecord(types.ERROR, l.String(message))
 }
 
 // Adds a log record at the ALERT level.
 func (l *Logger) Alert(message interface{}) {
-	l.AddRecord(types.ALERT, fmt.Sprintln(message))
+	l.AddRecord(types.ALERT, l.String(message))
 }
 
 // Adds a log record at the EMERGENCY level.
 func (l *Logger) Emergency(message interface{}) {
-	l.AddRecord(types.EMERGENCY, fmt.Sprintln(message))
+	l.AddRecord(types.EMERGENCY, l.String(message))
 }
 
 // Set the timezone to be used for the timestamp of log records.
@@ -196,6 +191,18 @@ func (l *Logger) SetTimezone(tz string) {
 	l.timezone = tz
 }
 
+// Get timezone
 func (l *Logger) GetTimezone(tz string) string {
 	return l.timezone
+}
+
+// Stringfy
+func (l *Logger) String(data interface{}) string {
+	switch data.(type) {
+	case string:
+		return data.(string)
+	case []byte:
+		return string(data.([]byte))
+	}
+	return fmt.Sprint(data)
 }

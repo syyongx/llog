@@ -30,7 +30,7 @@ func NewFile(path string, level int, bubble bool, useLocking bool) (IHandler, er
 }
 
 // Handle
-func (f *File) Handle(record types.Record) bool {
+func (f *File) Handle(record *types.Record) bool {
 	if !f.IsHandling(record) {
 		return false
 	}
@@ -38,7 +38,7 @@ func (f *File) Handle(record types.Record) bool {
 		record = f.ProcessRecord(record)
 	}
 	var err error
-	record["formatted"], err = f.GetFormatter().Format(record)
+	record.Formatted, err = f.GetFormatter().Format(record)
 	if err != nil {
 		return false
 	}
@@ -49,15 +49,15 @@ func (f *File) Handle(record types.Record) bool {
 }
 
 // HandleBatch
-func (f *File) HandleBatch(records []types.Record) {
+func (f *File) HandleBatch(records []*types.Record) {
 	for _, record := range records {
 		f.Handle(record)
 	}
 }
 
 // Write to file.
-func (f *File) Write(record types.Record) {
-	f.writer.Write(record["formatted"].([]byte))
+func (f *File) Write(record *types.Record) {
+	f.writer.Write(record.Formatted)
 	defer f.Close()
 }
 

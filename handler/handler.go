@@ -10,8 +10,8 @@ type Handler struct {
 }
 
 // Checks whether the given record will be handled by this handler.
-func (h *Handler) IsHandling(record types.Record) bool {
-	return record["level"].(int) >= h.level
+func (h *Handler) IsHandling(record *types.Record) bool {
+	return record.Level >= h.level
 }
 
 // Set level

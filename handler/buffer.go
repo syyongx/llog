@@ -16,8 +16,8 @@ func NewBuff() *Buffer {
 	return &Buffer{}
 }
 
-func (b *Buffer) Handle(record types.Record) bool {
-	if record["level"].(int) < b.level {
+func (b *Buffer) Handle(record *types.Record) bool {
+	if record.Level < b.level {
 		return false
 	}
 	if b.bufferLimit > 0 && b.bufferSize == b.bufferLimit {

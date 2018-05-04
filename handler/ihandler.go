@@ -8,13 +8,13 @@ import (
 // Interface of the Handler.
 type IHandler interface {
 	// Checks whether the given record will be handled by this handler.
-	IsHandling(record types.Record) bool
+	IsHandling(record *types.Record) bool
 
 	// Handles a record.
-	Handle(record types.Record) bool
+	Handle(record *types.Record) bool
 
 	// Handles a set of records at once.
-	HandleBatch(records []types.Record)
+	HandleBatch(records []*types.Record)
 
 	// Closes the handler.
 	Close()

@@ -16,7 +16,7 @@ func Test1(t *testing.T) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%", time.RFC3339)
+	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%\n", time.RFC3339)
 	h.(*handler.File).SetFormatter(f)
 	lr.PushHandler(h)
 	lr.Warning("xxx")
