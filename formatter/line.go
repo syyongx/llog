@@ -16,7 +16,7 @@ type Line struct {
 	format string
 }
 
-func NewLine(format, dateFormat string) IFormatter {
+func NewLine(format, dateFormat string) *Line {
 	if format == "" {
 		format = DefaultFormat
 	}

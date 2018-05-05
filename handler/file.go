@@ -15,7 +15,7 @@ type File struct {
 }
 
 // New file.
-func NewFile(path string, level int, bubble bool, useLocking bool) (IHandler, error) {
+func NewFile(path string, level int, bubble bool, useLocking bool) (*File, error) {
 	fd, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err

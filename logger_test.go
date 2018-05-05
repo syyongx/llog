@@ -11,14 +11,14 @@ import (
 )
 
 func Test1(t *testing.T) {
-	lr := NewLogger("demo")
+	logger := NewLogger("demo")
 	h, err := handler.NewFile("./access.log", types.WARNING, true, false)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%\n", time.RFC3339)
-	h.(*handler.File).SetFormatter(f)
-	lr.PushHandler(h)
-	lr.Warning("xxx")
+	h.SetFormatter(f)
+	logger.PushHandler(h)
+	logger.Warning("xxx")
 	os.Remove("./access.log")
 }

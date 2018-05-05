@@ -1,8 +1,8 @@
 # llog
-llog.
+llog - Monolog implementation in Go.
 
-## Download & Install
-```shell
+## Download & Installs
+```
 go get github.com/syyongx/llog
 ```
 
