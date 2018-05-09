@@ -30,22 +30,22 @@ func NewLine(format, dateFormat string) *Line {
 func (l *Line) Format(record *types.Record) ([]byte, error) {
 	output := l.format
 
-	if strings.Contains(output, "%datetime%") {
+	if strings.Contains(l.format, "%datetime%") {
 		output = strings.Replace(output, "%datetime%", l.normalizeTime(record.Datetime), -1)
 	}
-	if strings.Contains(output, "%channel%") {
+	if strings.Contains(l.format, "%channel%") {
 		output = strings.Replace(output, "%channel%", record.Channel, -1)
 	}
-	if strings.Contains(output, "%levelName%") {
+	if strings.Contains(l.format, "%levelName%") {
 		output = strings.Replace(output, "%levelName%", record.LevelName, -1)
 	}
-	if strings.Contains(output, "%message%") {
+	if strings.Contains(l.format, "%message%") {
 		output = strings.Replace(output, "%message%", record.Message, -1)
 	}
-	if strings.Contains(output, "%context%") {
+	if strings.Contains(l.format, "%context%") {
 		output = strings.Replace(output, "%context%", l.normalizeContext(record.Context), -1)
 	}
-	if strings.Contains(output, "%extra%") {
+	if strings.Contains(l.format, "%extra%") {
 		output = strings.Replace(output, "%extra%", l.normalizeExtra(record.Extra), -1)
 	}
 

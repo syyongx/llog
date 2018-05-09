@@ -7,12 +7,11 @@ import (
 	"github.com/syyongx/llog/types"
 	"github.com/syyongx/llog/formatter"
 	"time"
-	"os"
 )
 
 func Test1(t *testing.T) {
 	logger := NewLogger("demo")
-	h, err := handler.NewFile("./access.log", types.WARNING, true, false)
+	h, err := handler.NewFile("./llog.log", types.WARNING, true, false)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -20,5 +19,5 @@ func Test1(t *testing.T) {
 	h.SetFormatter(f)
 	logger.PushHandler(h)
 	logger.Warning("xxx")
-	os.Remove("./access.log")
+	//os.Remove("./access.log")
 }

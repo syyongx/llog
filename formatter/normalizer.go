@@ -32,7 +32,13 @@ func (n *Normalizer) GetDateFormat() string {
 // Normalize extra of record
 func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
 	if len(extra) > 1000 {
-		return ""
+		i := len(extra) - 1000
+		for k, _ := range extra {
+			if i--; i < 0 {
+				break
+			}
+			delete(extra, k)
+		}
 	}
 	// fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.RecordExtra)));
 	return n.ToJson(extra)
@@ -41,7 +47,13 @@ func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
 // Normalize context of record
 func (n *Normalizer) normalizeContext(ctx types.RecordContext) string {
 	if len(ctx) > 1000 {
-		return ""
+		i := len(ctx) - 1000
+		for k, _ := range ctx {
+			if i--; i < 0 {
+				break
+			}
+			delete(ctx, k)
+		}
 	}
 	return n.ToJson(ctx)
 }
@@ -64,7 +76,7 @@ func (n *Normalizer) normalizeFloat(f float64) string {
 	if math.IsNaN(f) {
 		return "NaN"
 	}
-	return strconv.FormatFloat(f, 'G', 30, 64)
+	return strconv.FormatFloat(f, 'f', 3, 64)
 }
 
 // Return the JSON representation of a value

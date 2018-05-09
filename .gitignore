@@ -1,0 +1,8 @@
+.idea/
+*.o
+*.a
+*.so
+*.exe
+*.test
+llog.log
+/out/

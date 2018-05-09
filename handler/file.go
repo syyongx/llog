@@ -10,19 +10,17 @@ type File struct {
 	Processable
 	Formattable
 
-	useLocking bool
-	writer     *os.File
+	writer *os.File
 }
 
 // New file.
-func NewFile(path string, level int, bubble bool, useLocking bool) (*File, error) {
+func NewFile(path string, level int, bubble bool) (*File, error) {
 	fd, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err
 	}
 	f := &File{
-		useLocking: useLocking,
-		writer:     fd,
+		writer: fd,
 	}
 	f.SetLevel(level)
 	f.SetBubble(bubble)
@@ -58,7 +56,7 @@ func (f *File) HandleBatch(records []*types.Record) {
 // Write to file.
 func (f *File) Write(record *types.Record) {
 	f.writer.Write(record.Formatted)
-	defer f.Close()
+	//defer f.Close()
 }
 
 // Close writer
