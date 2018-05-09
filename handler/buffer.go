@@ -1,48 +1,76 @@
 package handler
 
-import "github.com/syyongx/llog/types"
+import (
+	"github.com/syyongx/llog/types"
+)
 
 type Buffer struct {
 	Handler
 	Processable
 
+	h               IHandler
 	bufferSize      int
 	bufferLimit     int
 	flushOnOverflow bool
-	buffer          []types.Record
+	buffer          []*types.Record
 }
 
-func NewBuff() *Buffer {
-	return &Buffer{}
+// New buffer handler
+// bufferLimit: How many entries should be buffered at most, beyond that the oldest items are removed from the buffer.
+// flushOnOverflow: If true, the buffer is flushed when the max size has been reached, by default oldest entries are discarded
+func NewBuffer(handler IHandler, bufferLimit, level int, bubble, flushOnOverflow bool) *Buffer {
+	buf := &Buffer{
+		h:               handler,
+		bufferLimit:     bufferLimit,
+		flushOnOverflow: flushOnOverflow,
+		buffer:          make([]*types.Record, 0, bufferLimit),
+	}
+	buf.SetLevel(level)
+	buf.SetBubble(bubble)
+	return buf
 }
 
-func (b *Buffer) Handle(record *types.Record) bool {
-	if record.Level < b.level {
+func (buf *Buffer) Handle(record *types.Record) bool {
+	if record.Level < buf.level {
 		return false
 	}
-	if b.bufferLimit > 0 && b.bufferSize == b.bufferLimit {
-		if b.flushOnOverflow {
-			b.Flush()
+	if buf.bufferLimit > 0 && buf.bufferSize == buf.bufferLimit {
+		if buf.flushOnOverflow {
+			buf.Flush()
 		} else {
-			b.bufferSize--
+			// If overflow remove the first record.
+			buf.buffer = buf.buffer[1:]
+			buf.bufferSize--
 		}
 	}
-	if b.processors != nil {
-		b.ProcessRecord(record)
+	if buf.processors != nil {
+		buf.ProcessRecord(record)
 	}
+	buf.buffer = append(buf.buffer, record)
+	buf.bufferSize++
 
-	return false == b.bubble
+	return false == buf.GetBubble()
 }
 
-func (b *Buffer) Flush() {
-	if b.bufferSize == 0 {
+func (buf *Buffer) HandleBatch(records []*types.Record) {
+	buf.h.HandleBatch(records)
+}
+
+func (buf *Buffer) Flush() {
+	if buf.bufferSize == 0 {
 		return
 	}
-	//b.HandleBatch(b.buffer)
+	buf.HandleBatch(buf.buffer)
 }
 
 // Clears the buffer without flushing any messages down to the wrapped handler.
-func (b *Buffer) Clear() {
-	b.bufferSize = 0
-	b.buffer = b.buffer[:0]
+func (buf *Buffer) Clear() {
+	buf.bufferSize = 0
+	buf.buffer = buf.buffer[:0]
+}
+
+// close
+func (buf *Buffer) Close() {
+	//buf.h.Close()
+	buf.Flush()
 }

@@ -13,7 +13,7 @@ type File struct {
 	writer *os.File
 }
 
-// New file.
+// New file handler
 func NewFile(path string, level int, bubble bool) (*File, error) {
 	fd, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
@@ -55,6 +55,9 @@ func (f *File) HandleBatch(records []*types.Record) {
 
 // Write to file.
 func (f *File) Write(record *types.Record) {
+	if f.writer == nil {
+		return
+	}
 	f.writer.Write(record.Formatted)
 	//defer f.Close()
 }
