@@ -35,8 +35,7 @@ func (f *File) Handle(record *types.Record) bool {
 	if f.processors != nil {
 		f.ProcessRecord(record)
 	}
-	var err error
-	record.Formatted, err = f.GetFormatter().Format(record)
+	err := f.GetFormatter().Format(record)
 	if err != nil {
 		return false
 	}
@@ -58,7 +57,7 @@ func (f *File) Write(record *types.Record) {
 	if f.writer == nil {
 		return
 	}
-	f.writer.Write(record.Formatted)
+	f.writer.Write(record.Buffer.Bytes())
 	//defer f.Close()
 }
 

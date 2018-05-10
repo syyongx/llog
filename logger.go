@@ -7,6 +7,7 @@ import (
 	"github.com/syyongx/llog/types"
 	"github.com/syyongx/llog/processor"
 	"time"
+	"bytes"
 )
 
 // logger struct
@@ -109,6 +110,11 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	record.LevelName = levelName
 	record.Channel = l.name
 	record.Datetime = time.Now()
+	record.Buffer = types.BufferPool.Get().(*bytes.Buffer)
+	defer func() {
+		record.Buffer.Reset()
+		types.BufferPool.Put(record.Buffer)
+	}()
 
 	for _, p := range l.processors {
 		p(record)
@@ -117,7 +123,7 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 		if hKey < j {
 			continue
 		}
-		if h.Handle(record) {
+		if h.Handle(record) { // Will not bubble
 			break
 		}
 	}

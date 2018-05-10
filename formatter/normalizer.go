@@ -41,7 +41,7 @@ func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
 		}
 	}
 	// fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.RecordExtra)));
-	return n.ToJson(extra)
+	return string(n.ToJson(extra))
 }
 
 // Normalize context of record
@@ -55,7 +55,7 @@ func (n *Normalizer) normalizeContext(ctx types.RecordContext) string {
 			delete(ctx, k)
 		}
 	}
-	return n.ToJson(ctx)
+	return string(n.ToJson(ctx))
 }
 
 // Normalize float
@@ -80,10 +80,10 @@ func (n *Normalizer) normalizeFloat(f float64) string {
 }
 
 // Return the JSON representation of a value
-func (n *Normalizer) ToJson(data interface{}) string {
+func (n *Normalizer) ToJson(data interface{}) []byte {
 	v, err := json.Marshal(data)
 	if err != nil {
-		return err.Error()
+		return []byte(err.Error())
 	}
-	return string(v)
+	return v
 }
