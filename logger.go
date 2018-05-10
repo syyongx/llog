@@ -3,11 +3,11 @@ package llog
 import (
 	"errors"
 	"fmt"
+	"time"
+	"bytes"
 	"github.com/syyongx/llog/handler"
 	"github.com/syyongx/llog/types"
 	"github.com/syyongx/llog/processor"
-	"time"
-	"bytes"
 )
 
 // logger struct
@@ -93,7 +93,8 @@ func (l *Logger) GetProcessor() []processor.Processor {
 // Adds a log record.
 func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	hKey := -1
-	record := &types.Record{Level: level}
+	record := types.GetRecord()
+	record.Level = level
 	for i, v := range l.handlers {
 		if v.IsHandling(record) {
 			hKey = i
@@ -114,6 +115,7 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	defer func() {
 		record.Buffer.Reset()
 		types.BufferPool.Put(record.Buffer)
+		types.PutRecord(record)
 	}()
 
 	for _, p := range l.processors {

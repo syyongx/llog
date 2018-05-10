@@ -39,7 +39,6 @@ func (f *File) Handle(record *types.Record) bool {
 	if err != nil {
 		return false
 	}
-
 	f.Write(record)
 
 	return false == f.GetBubble()

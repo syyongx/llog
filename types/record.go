@@ -7,11 +7,17 @@ import (
 )
 
 var BufferPool *sync.Pool
+var RecordPool *sync.Pool
 
 func init() {
 	BufferPool = &sync.Pool{
 		New: func() interface{} {
 			return new(bytes.Buffer)
+		},
+	}
+	RecordPool = &sync.Pool{
+		New: func() interface{} {
+			return new(Record)
 		},
 	}
 }
@@ -30,6 +36,15 @@ type Record struct {
 	Buffer    *bytes.Buffer
 }
 
-func NewRecord() *Record {
-	return &Record{}
+// Get record from pool.
+func GetRecord() *Record {
+	if record, ok := RecordPool.Get().(*Record); ok {
+		return record
+	}
+	return new(Record)
+}
+
+// Put record to pool.
+func PutRecord(record *Record) {
+	RecordPool.Put(record)
 }
