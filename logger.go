@@ -149,7 +149,7 @@ func (l *Logger) IsHandling(level int) bool {
 	return true
 }
 
-// Adds a log record at an arbitrary level.
+// Logs with an arbitrary level.
 func (l *Logger) Log(level int, message string) {
 	if _, ok := l.levels[level]; !ok {
 		//
@@ -157,27 +157,31 @@ func (l *Logger) Log(level int, message string) {
 	l.AddRecord(level, message)
 }
 
-// Adds a log record at the DEBUG level.
+// Detailed debug information.
 func (l *Logger) Debug(message interface{}) {
 	l.AddRecord(types.DEBUG, l.String(message))
 }
 
-// Adds a log record at the INFO level.
+// Interesting events.
+// Example: User logs in, SQL logs.
 func (l *Logger) Info(message interface{}) {
 	l.AddRecord(types.INFO, l.String(message))
 }
 
-// Adds a log record at the NOTICE level.
+// Normal but significant events.
 func (l *Logger) Notice(message interface{}) {
 	l.AddRecord(types.NOTICE, l.String(message))
 }
 
-// Adds a log record at the WARNING level.
+// Exceptional occurrences that are not errors.
+// Example: Use of deprecated APIs, poor use of an API, undesirable things
+// that are not necessarily wrong.
 func (l *Logger) Warning(message interface{}) {
 	l.AddRecord(types.WARNING, l.String(message))
 }
 
-// Adds a log record at the ERROR level.
+// Runtime errors that do not require immediate action but should typically
+// be logged and monitored.
 func (l *Logger) Error(message interface{}) {
 	l.AddRecord(types.ERROR, l.String(message))
 }
@@ -187,7 +191,7 @@ func (l *Logger) Alert(message interface{}) {
 	l.AddRecord(types.ALERT, l.String(message))
 }
 
-// Adds a log record at the EMERGENCY level.
+// System is unusable.
 func (l *Logger) Emergency(message interface{}) {
 	l.AddRecord(types.EMERGENCY, l.String(message))
 }

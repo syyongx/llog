@@ -3,6 +3,8 @@ package handler
 import (
 	"os"
 	"github.com/syyongx/llog/types"
+	"regexp"
+	"strings"
 )
 
 // Stores logs to files that are rotated every day and a limited number of files are kept.
@@ -25,8 +27,10 @@ type RotatingFile struct {
 // filePerm: Optional file permissions (default (0644) are only for owner read/write)
 func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm os.FileMode) *RotatingFile {
 	rf := &RotatingFile{
-		filename: filename,
-		maxFiles: maxFiles,
+		filename:       filename,
+		maxFiles:       maxFiles,
+		filenameFormat: "{filename}-{date}",
+		dateFormat:     "2016-01-02",
 	}
 	rf.f.SetLevel(level)
 	rf.f.SetBubble(bubble)
@@ -34,7 +38,18 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 }
 
 func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) {
+	match, _ := regexp.MatchString("^2006(([/_.-]?01)([/_.-]?02)?)?$", dateFormat)
+	if !match {
+		// error
+		return
+	}
+	if n := strings.Index(filenameFormat, "{date}"); n < 0 {
+		// error
+		return
+	}
 
+	rf.filenameFormat = filenameFormat
+	rf.dateFormat = dateFormat
 }
 
 func (rf *RotatingFile) Write(record *types.Record) {
