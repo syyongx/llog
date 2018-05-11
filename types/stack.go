@@ -19,7 +19,7 @@ func (s *Stack) Pop() (interface{}, error) {
 	return v, nil
 }
 
-// length
+// Get length
 func (s *Stack) Len() int {
 	return len(*s)
 }
