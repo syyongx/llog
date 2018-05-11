@@ -11,7 +11,7 @@ import (
 
 func TestBasic(t *testing.T) {
 	logger := NewLogger("test")
-	h, err := handler.NewFile("/dev/null", types.WARNING, true)
+	h, err := handler.NewFile("/dev/null", types.WARNING, true, 0644)
 	buf := handler.NewBuffer(h, 1, types.WARNING, true, true)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -25,7 +25,7 @@ func TestBasic(t *testing.T) {
 
 func BenchmarkBasic(b *testing.B) {
 	logger := NewLogger("test")
-	h, err := handler.NewFile("/dev/null", types.WARNING, true)
+	h, err := handler.NewFile("/dev/null", types.WARNING, true, 0644)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

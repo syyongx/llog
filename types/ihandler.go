@@ -1,20 +1,15 @@
-package handler
-
-import (
-	"github.com/syyongx/llog/formatter"
-	"github.com/syyongx/llog/types"
-)
+package types
 
 // Interface of the Handler.
 type IHandler interface {
 	// Checks whether the given record will be handled by this handler.
-	IsHandling(record *types.Record) bool
+	IsHandling(record *Record) bool
 
 	// Handles a record.
-	Handle(record *types.Record) bool
+	Handle(record *Record) bool
 
 	// Handles a set of records at once.
-	HandleBatch(records []*types.Record)
+	HandleBatch(records []*Record)
 
 	// Closes the handler.
 	Close()
@@ -23,10 +18,10 @@ type IHandler interface {
 // Interface to describe loggers that have a formatter
 type IFormattableHandler interface {
 	// Sets the formatter.
-	SetFormatter(formatter *formatter.IFormatter) *IHandler
+	SetFormatter(formatter *IFormatter) *IHandler
 
 	// Gets the formatter.
-	GetFormatter() *formatter.IFormatter
+	GetFormatter() *IFormatter
 }
 
 // Interface to describe loggers that have processors

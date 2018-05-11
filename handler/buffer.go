@@ -8,7 +8,7 @@ type Buffer struct {
 	Handler
 	Processable
 
-	h               IHandler
+	h               types.IHandler
 	bufferSize      int
 	bufferLimit     int
 	flushOnOverflow bool
@@ -18,7 +18,7 @@ type Buffer struct {
 // New buffer handler
 // bufferLimit: How many entries should be buffered at most, beyond that the oldest items are removed from the buffer.
 // flushOnOverflow: If true, the buffer is flushed when the max size has been reached, by default oldest entries are discarded
-func NewBuffer(handler IHandler, bufferLimit, level int, bubble, flushOnOverflow bool) *Buffer {
+func NewBuffer(handler types.IHandler, bufferLimit, level int, bubble, flushOnOverflow bool) *Buffer {
 	buf := &Buffer{
 		h:               handler,
 		bufferLimit:     bufferLimit,

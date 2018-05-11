@@ -6,11 +6,11 @@ type Filter struct {
 	Handler
 	Processable
 
-	h              IHandler
+	h              types.IHandler
 	acceptedLevels map[int]int
 }
 
-func NewFilter(handler IHandler, minLevels, maxLevels []int, bubble bool) *Filter {
+func NewFilter(handler types.IHandler, minLevels, maxLevels []int, bubble bool) *Filter {
 	f := &Filter{
 		h: handler,
 	}

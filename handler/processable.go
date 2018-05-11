@@ -1,21 +1,20 @@
 package handler
 
 import (
-	"github.com/syyongx/llog/processor"
 	"github.com/syyongx/llog/types"
 )
 
 type Processable struct {
-	processors []processor.Processor
+	processors []types.Processor
 }
 
 // push processor
-func (p *Processable) PushProcessor(processor.Processor) {
+func (p *Processable) PushProcessor(types.Processor) {
 
 }
 
 // pop processor
-func (p *Processable) PopProcessor() processor.Processor {
+func (p *Processable) PopProcessor() types.Processor {
 	return nil
 }
 

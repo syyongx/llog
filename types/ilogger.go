@@ -1,4 +1,4 @@
-package llog
+package types
 
 // Logger Interface
 // RFC 5424

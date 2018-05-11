@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"time"
 	"bytes"
-	"github.com/syyongx/llog/handler"
 	"github.com/syyongx/llog/types"
-	"github.com/syyongx/llog/processor"
 )
 
 // logger struct
 type Logger struct {
 	name       string
 	levels     map[int]string
-	handlers   []handler.IHandler
-	processors []processor.Processor
+	handlers   []types.IHandler
+	processors []types.Processor
 	timezone   string
 }
 
@@ -43,12 +41,12 @@ func (l *Logger) GetName() string {
 }
 
 // Pushes a handler on to the stack.
-func (l *Logger) PushHandler(h handler.IHandler) {
-	l.handlers = append([]handler.IHandler{h}, l.handlers...)
+func (l *Logger) PushHandler(h types.IHandler) {
+	l.handlers = append([]types.IHandler{h}, l.handlers...)
 }
 
 // Pops a handler from the stack.
-func (l *Logger) PopHandler() (handler.IHandler, error) {
+func (l *Logger) PopHandler() (types.IHandler, error) {
 	if len(l.handlers) < 1 {
 		return nil, errors.New("You tried to pop from an empty handler slice.")
 	}
@@ -58,7 +56,7 @@ func (l *Logger) PopHandler() (handler.IHandler, error) {
 }
 
 // Set handlers, replacing all existing ones.
-func (l *Logger) SetHandlers(handlers []handler.IHandler) {
+func (l *Logger) SetHandlers(handlers []types.IHandler) {
 	l.handlers = l.handlers[:0]
 	for i := len(handlers); i > 0; i-- {
 		l.PushHandler(handlers[i-1])
@@ -66,17 +64,17 @@ func (l *Logger) SetHandlers(handlers []handler.IHandler) {
 }
 
 // Get handlers
-func (l *Logger) GetHandlers() []handler.IHandler {
+func (l *Logger) GetHandlers() []types.IHandler {
 	return l.handlers
 }
 
 // Pushes a processor on to the stack.
-func (l *Logger) PushProcessor(p processor.Processor) {
-	l.processors = append([]processor.Processor{p}, l.processors...)
+func (l *Logger) PushProcessor(p types.Processor) {
+	l.processors = append([]types.Processor{p}, l.processors...)
 }
 
 // Pops a processor from the stack.
-func (l *Logger) PopProcessor() (processor.Processor, error) {
+func (l *Logger) PopProcessor() (types.Processor, error) {
 	if len(l.processors) < 1 {
 		return nil, errors.New("You tried to pop from an empty processor slice.")
 	}
@@ -86,7 +84,7 @@ func (l *Logger) PopProcessor() (processor.Processor, error) {
 }
 
 // Get processors
-func (l *Logger) GetProcessor() []processor.Processor {
+func (l *Logger) GetProcessor() []types.Processor {
 	return l.processors
 }
 
