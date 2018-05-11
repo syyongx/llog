@@ -1,7 +1,7 @@
 package types
 
 // interface fromatter
-type IFormatter interface {
+type Formatter interface {
 	// Formats a log record.
 	Format(record *Record) error
 

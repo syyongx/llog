@@ -16,16 +16,16 @@ type IHandler interface {
 }
 
 // Interface to describe loggers that have a formatter
-type IFormattableHandler interface {
+type FormattableHandler interface {
 	// Sets the formatter.
-	SetFormatter(formatter *IFormatter) *IHandler
+	SetFormatter(formatter *Formatter) *IHandler
 
 	// Gets the formatter.
-	GetFormatter() *IFormatter
+	GetFormatter() *Formatter
 }
 
 // Interface to describe loggers that have processors
-type IProcessableHandler interface {
+type ProcessableHandler interface {
 	// Adds a processor in the stack.
 	PushProcessor() *IHandler
 

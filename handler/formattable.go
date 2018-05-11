@@ -7,20 +7,20 @@ import (
 )
 
 type Formattable struct {
-	formatter types.IFormatter
+	formatter types.Formatter
 }
 
 // Set formatter
-func (f *Formattable) SetFormatter(formatter types.IFormatter) {
+func (f *Formattable) SetFormatter(formatter types.Formatter) {
 	f.formatter = formatter
 }
 
 // Get formatter
-func (f *Formattable) GetFormatter() types.IFormatter {
+func (f *Formattable) GetFormatter() types.Formatter {
 	return f.formatter
 }
 
 //Gets the default formatter.
-func (f *Formattable) GetDefaultFormatter() types.IFormatter {
+func (f *Formattable) GetDefaultFormatter() types.Formatter {
 	return formatter.NewLine(formatter.DefaultFormat, time.RFC3339)
 }
