@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-var DefaultFormat = "[%datetime%] %channel%.%levelName%: %message% %context% %extra%\n"
+var DefaultFormat = "[%Datetime%] %Channel%.%LevelName%: %Message% %Context% %Extra%\n"
 
 // Formats incoming records into a one-line string
 // This is especially useful for logging to files
@@ -30,23 +30,23 @@ func NewLine(format, dateFormat string) *Line {
 func (l *Line) Format(record *types.Record) error {
 	output := l.format
 
-	if strings.Contains(l.format, "%datetime%") {
-		output = strings.Replace(output, "%datetime%", l.normalizeTime(record.Datetime), 1)
+	if strings.Contains(l.format, "%Datetime%") {
+		output = strings.Replace(output, "%Datetime%", l.normalizeTime(record.Datetime), 1)
 	}
-	if strings.Contains(l.format, "%channel%") {
-		output = strings.Replace(output, "%channel%", record.Channel, 1)
+	if strings.Contains(l.format, "%Channel%") {
+		output = strings.Replace(output, "%Channel%", record.Channel, 1)
 	}
-	if strings.Contains(l.format, "%levelName%") {
-		output = strings.Replace(output, "%levelName%", record.LevelName, 1)
+	if strings.Contains(l.format, "%LevelName%") {
+		output = strings.Replace(output, "%LevelName%", record.LevelName, 1)
 	}
-	if strings.Contains(l.format, "%message%") {
-		output = strings.Replace(output, "%message%", record.Message, 1)
+	if strings.Contains(l.format, "%Message%") {
+		output = strings.Replace(output, "%Message%", record.Message, 1)
 	}
-	if strings.Contains(l.format, "%context%") {
-		output = strings.Replace(output, "%context%", l.normalizeContext(record.Context), 1)
+	if strings.Contains(l.format, "%Context%") {
+		output = strings.Replace(output, "%Context%", l.normalizeContext(record.Context), 1)
 	}
-	if strings.Contains(l.format, "%extra%") {
-		output = strings.Replace(output, "%extra%", l.normalizeExtra(record.Extra), 1)
+	if strings.Contains(l.format, "%Extra%") {
+		output = strings.Replace(output, "%Extra%", l.normalizeExtra(record.Extra), 1)
 	}
 	record.Buffer.WriteString(output)
 

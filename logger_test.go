@@ -16,7 +16,7 @@ func TestBasic(t *testing.T) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%\n", time.RFC3339)
+	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	h.SetFormatter(f)
 	logger.PushHandler(buf)
 	logger.Warning("xxx")
@@ -29,7 +29,7 @@ func BenchmarkBasic(b *testing.B) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	f := formatter.NewLine("%datetime% [%levelName%] [%channel%] %message%\n", time.RFC3339)
+	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	h.SetFormatter(f)
 	//buf := handler.NewBuffer(h, 1, types.WARNING, true, true)
 	//logger.PushHandler(buf)
