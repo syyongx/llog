@@ -11,5 +11,5 @@ var Uid = func(record *types.Record) {
 	now := time.Now()
 	sec := now.Unix()
 	usec := now.UnixNano() % 0x100000
-	record.Extra["uid"] = fmt.Sprintf("%08x%05x", sec, usec)
+	record.Extra["Uid"] = fmt.Sprintf("%08x%05x", sec, usec)
 }

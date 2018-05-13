@@ -6,16 +6,10 @@ import (
 	"sync"
 )
 
-var BufferPool *sync.Pool
-var RecordPool *sync.Pool
+var recordPool *sync.Pool
 
 func init() {
-	BufferPool = &sync.Pool{
-		New: func() interface{} {
-			return new(bytes.Buffer)
-		},
-	}
-	RecordPool = &sync.Pool{
+	recordPool = &sync.Pool{
 		New: func() interface{} {
 			return new(Record)
 		},
@@ -33,18 +27,21 @@ type Record struct {
 	Message   string
 	Context   RecordContext
 	Extra     RecordExtra
-	Buffer    *bytes.Buffer
+	Formatted *bytes.Buffer
 }
 
 // Get record from pool.
-func GetRecord() *Record {
-	if record, ok := RecordPool.Get().(*Record); ok {
-		return record
+func NewRecord() *Record {
+	record, ok := recordPool.Get().(*Record);
+	if !ok {
+		record = new(Record)
+		//record.Buffer = new(bytes.Buffer)
 	}
-	return new(Record)
+	return record
 }
 
 // Put record to pool.
-func PutRecord(record *Record) {
-	RecordPool.Put(record)
+func ReleaseRecord(record *Record) {
+	record.Formatted.Reset()
+	recordPool.Put(record)
 }

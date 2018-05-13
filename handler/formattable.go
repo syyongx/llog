@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/syyongx/llog/formatter"
 	"time"
+	"github.com/syyongx/llog/formatter"
 	"github.com/syyongx/llog/types"
 )
 

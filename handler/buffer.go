@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"sync"
 	"github.com/syyongx/llog/types"
 )
 
@@ -8,11 +9,12 @@ type Buffer struct {
 	Handler
 	Processable
 
-	h               types.IHandler
+	BufferLimit     int
+	FlushOnOverflow bool
 	bufferSize      int
-	bufferLimit     int
-	flushOnOverflow bool
-	buffer          []*types.Record
+	h               types.IHandler
+	buffer          chan *types.Record
+	once            sync.Once
 }
 
 // New buffer handler
@@ -20,10 +22,11 @@ type Buffer struct {
 // flushOnOverflow: If true, the buffer is flushed when the max size has been reached, by default oldest entries are discarded
 func NewBuffer(handler types.IHandler, bufferLimit, level int, bubble, flushOnOverflow bool) *Buffer {
 	buf := &Buffer{
+		BufferLimit:     bufferLimit,
+		FlushOnOverflow: flushOnOverflow,
 		h:               handler,
-		bufferLimit:     bufferLimit,
-		flushOnOverflow: flushOnOverflow,
-		buffer:          make([]*types.Record, 0, bufferLimit),
+		buffer:          make(chan *types.Record, bufferLimit),
+		once:            sync.Once{},
 	}
 	buf.SetLevel(level)
 	buf.SetBubble(bubble)
@@ -34,26 +37,37 @@ func (buf *Buffer) Handle(record *types.Record) bool {
 	if record.Level < buf.level {
 		return false
 	}
-	if buf.bufferLimit > 0 && buf.bufferSize == buf.bufferLimit {
-		if buf.flushOnOverflow {
-			buf.Flush()
+	if buf.BufferLimit > 0 && buf.bufferSize == buf.BufferLimit {
+		if buf.FlushOnOverflow {
+			buf.once.Do(func() {
+				go buf.Flush()
+			})
 		} else {
 			// If overflow remove the first record.
-			buf.buffer = buf.buffer[1:]
-			buf.bufferSize--
+			<-buf.buffer
+			//buf.bufferSize--
 		}
 	}
 	if buf.processors != nil {
 		buf.ProcessRecord(record)
 	}
-	buf.buffer = append(buf.buffer, record)
-	buf.bufferSize++
+	//buf.buffer <- record
+	select {
+	case buf.buffer <- record:
+	default:
+		// channel is full
+	}
+	//buf.bufferSize++
 
 	return false == buf.GetBubble()
 }
 
-func (buf *Buffer) HandleBatch(records []*types.Record) {
-	buf.h.HandleBatch(records)
+func (buf *Buffer) HandleBatch(records chan *types.Record) {
+	//buf.h.HandleBatch(records)
+	for {
+		record := <-records
+		buf.h.Handle(record)
+	}
 }
 
 func (buf *Buffer) Flush() {
@@ -66,7 +80,7 @@ func (buf *Buffer) Flush() {
 // Clears the buffer without flushing any messages down to the wrapped handler.
 func (buf *Buffer) Clear() {
 	buf.bufferSize = 0
-	buf.buffer = buf.buffer[:0]
+	buf.buffer = nil
 }
 
 // close

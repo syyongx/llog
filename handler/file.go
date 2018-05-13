@@ -1,16 +1,17 @@
 package handler
 
 import (
-	"github.com/syyongx/llog/types"
 	"os"
+	"github.com/syyongx/llog/types"
 )
 
+// File handler.
 type File struct {
 	Handler
 	Processable
 	Formattable
 
-	Writer *os.File
+	Fd *os.File
 }
 
 // New file handler
@@ -20,7 +21,7 @@ func NewFile(path string, level int, bubble bool, filePerm os.FileMode) (*File, 
 		return nil, err
 	}
 	f := &File{
-		Writer: fd,
+		Fd: fd,
 	}
 	f.SetLevel(level)
 	f.SetBubble(bubble)
@@ -53,15 +54,15 @@ func (f *File) HandleBatch(records []*types.Record) {
 
 // Write to file.
 func (f *File) Write(record *types.Record) {
-	if f.Writer == nil {
+	if f.Fd == nil {
 		return
 	}
-	f.Writer.Write(record.Buffer.Bytes())
+	f.Fd.Write(record.Formatted.Bytes())
 	//defer f.Close()
 }
 
 // Close writer
 func (f *File) Close() {
-	f.Writer.Close()
-	f.Writer = nil
+	f.Fd.Close()
+	f.Fd = nil
 }

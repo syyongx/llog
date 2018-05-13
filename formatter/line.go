@@ -1,9 +1,9 @@
 package formatter
 
 import (
-	"github.com/syyongx/llog/types"
 	"strings"
 	"fmt"
+	"github.com/syyongx/llog/types"
 )
 
 var DefaultFormat = "[%Datetime%] %Channel%.%LevelName%: %Message% %Context% %Extra%\n"
@@ -48,7 +48,7 @@ func (l *Line) Format(record *types.Record) error {
 	if strings.Contains(l.format, "%Extra%") {
 		output = strings.Replace(output, "%Extra%", l.normalizeExtra(record.Extra), 1)
 	}
-	record.Buffer.WriteString(output)
+	record.Formatted.WriteString(output)
 
 	return nil
 }

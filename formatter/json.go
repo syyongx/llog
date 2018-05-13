@@ -57,9 +57,9 @@ func (j *Json) Format(record *types.Record) error {
 			output[field] = "unknow"
 		}
 	}
-	record.Buffer.Write(j.ToJson(output))
+	record.Formatted.Write(j.ToJson(output))
 	if j.appendNewline {
-		record.Buffer.WriteRune('\n')
+		record.Formatted.WriteRune('\n')
 	}
 	return nil
 }

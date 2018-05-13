@@ -2,9 +2,9 @@ package handler
 
 import (
 	"os"
-	"github.com/syyongx/llog/types"
-	"regexp"
 	"strings"
+	"regexp"
+	"github.com/syyongx/llog/types"
 )
 
 // Stores logs to files that are rotated every day and a limited number of files are kept.

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	"bytes"
 	"github.com/syyongx/llog/types"
 )
 
@@ -76,7 +75,7 @@ func (l *Logger) PushProcessor(p types.Processor) {
 // Pops a processor from the stack.
 func (l *Logger) PopProcessor() (types.Processor, error) {
 	if len(l.processors) < 1 {
-		return nil, errors.New("You tried to pop from an empty processor slice.")
+		return nil, errors.New("You tried to pop from an empty processor stack.")
 	}
 	first := l.processors[0]
 	l.processors = l.processors[1:]
@@ -91,7 +90,8 @@ func (l *Logger) GetProcessor() []types.Processor {
 // Adds a log record.
 func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	hKey := -1
-	record := types.GetRecord()
+	record := types.NewRecord()
+	defer types.ReleaseRecord(record)
 	record.Level = level
 	for i, v := range l.handlers {
 		if v.IsHandling(record) {
@@ -109,12 +109,6 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	record.LevelName = levelName
 	record.Channel = l.name
 	record.Datetime = time.Now()
-	record.Buffer = types.BufferPool.Get().(*bytes.Buffer)
-	defer func() {
-		record.Buffer.Reset()
-		types.BufferPool.Put(record.Buffer)
-		types.PutRecord(record)
-	}()
 
 	for _, p := range l.processors {
 		p(record)

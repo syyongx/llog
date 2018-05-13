@@ -2,10 +2,10 @@ package formatter
 
 import (
 	"math"
-	"github.com/syyongx/llog/types"
 	"encoding/json"
 	"time"
 	"strconv"
+	"github.com/syyongx/llog/types"
 )
 
 // Normalizes incoming records to remove objects/resources so it's easier to dump to various targets
