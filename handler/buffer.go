@@ -1,90 +1,77 @@
 package handler
 
 import (
-	"sync"
 	"github.com/syyongx/llog/types"
+	"sync"
 )
 
 type Buffer struct {
 	Handler
 	Processable
 
-	BufferLimit     int
 	FlushOnOverflow bool
-	bufferSize      int
+	bufferLimit     int
 	h               types.IHandler
-	buffer          chan *types.Record
-	once            sync.Once
+	buffer          []*types.Record
+	mu              sync.Mutex
 }
 
 // New buffer handler
 // bufferLimit: How many entries should be buffered at most, beyond that the oldest items are removed from the buffer.
 // flushOnOverflow: If true, the buffer is flushed when the max size has been reached, by default oldest entries are discarded
 func NewBuffer(handler types.IHandler, bufferLimit, level int, bubble, flushOnOverflow bool) *Buffer {
-	buf := &Buffer{
-		BufferLimit:     bufferLimit,
+	b := &Buffer{
 		FlushOnOverflow: flushOnOverflow,
+		bufferLimit:     bufferLimit,
 		h:               handler,
-		buffer:          make(chan *types.Record, bufferLimit),
-		once:            sync.Once{},
+		buffer:          make([]*types.Record, 0, bufferLimit),
 	}
-	buf.SetLevel(level)
-	buf.SetBubble(bubble)
-	return buf
+	b.SetLevel(level)
+	b.SetBubble(bubble)
+	return b
 }
 
-func (buf *Buffer) Handle(record *types.Record) bool {
-	if record.Level < buf.level {
+func (b *Buffer) Handle(record *types.Record) bool {
+	if record.Level < b.level {
 		return false
 	}
-	if buf.BufferLimit > 0 && buf.bufferSize == buf.BufferLimit {
-		if buf.FlushOnOverflow {
-			buf.once.Do(func() {
-				go buf.Flush()
-			})
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.bufferLimit > 0 && len(b.buffer) == b.bufferLimit {
+		if b.FlushOnOverflow {
+			b.Flush()
 		} else {
 			// If overflow remove the first record.
-			<-buf.buffer
-			//buf.bufferSize--
+			b.buffer = b.buffer[1:]
 		}
 	}
-	if buf.processors != nil {
-		buf.ProcessRecord(record)
+	if b.processors != nil {
+		b.ProcessRecord(record)
 	}
-	//buf.buffer <- record
-	select {
-	case buf.buffer <- record:
-	default:
-		// channel is full
-	}
-	//buf.bufferSize++
+	b.buffer = append(b.buffer, record)
 
-	return false == buf.GetBubble()
+	return false == b.GetBubble()
 }
 
-func (buf *Buffer) HandleBatch(records chan *types.Record) {
-	//buf.h.HandleBatch(records)
-	for {
-		record := <-records
-		buf.h.Handle(record)
-	}
+func (b *Buffer) HandleBatch(records []*types.Record) {
+	b.h.HandleBatch(records)
 }
 
-func (buf *Buffer) Flush() {
-	if buf.bufferSize == 0 {
+func (b *Buffer) Flush() {
+	if len(b.buffer) == 0 {
 		return
 	}
-	buf.HandleBatch(buf.buffer)
+	b.HandleBatch(b.buffer)
+	b.Clear()
 }
 
 // Clears the buffer without flushing any messages down to the wrapped handler.
-func (buf *Buffer) Clear() {
-	buf.bufferSize = 0
-	buf.buffer = nil
+func (b *Buffer) Clear() {
+	b.buffer = b.buffer[:0]
 }
 
 // close
-func (buf *Buffer) Close() {
-	//buf.h.Close()
-	buf.Flush()
+func (b *Buffer) Close() {
+	//b.h.Close()
+	b.Flush()
 }

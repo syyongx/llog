@@ -54,7 +54,7 @@ func (l *Line) Format(record *types.Record) error {
 }
 
 // Batch format records.
-func (l *Line) FormatBatch(records []*types.Record) error {
+func (l Line) FormatBatch(records []*types.Record) error {
 	for _, record := range records {
 		err := l.Format(record)
 		if err != nil {
