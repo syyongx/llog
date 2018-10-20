@@ -1,8 +1,8 @@
 package processor
 
 import (
-	"os"
 	"github.com/syyongx/llog/types"
+	"os"
 )
 
 // Get process id.

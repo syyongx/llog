@@ -1,9 +1,9 @@
 package processor
 
 import (
-	"time"
 	"fmt"
 	"github.com/syyongx/llog/types"
+	"time"
 )
 
 // Uniqid processor.

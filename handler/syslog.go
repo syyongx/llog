@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"log/syslog"
-	"github.com/syyongx/llog/types"
 	"github.com/syyongx/llog/formatter"
+	"github.com/syyongx/llog/types"
+	"log/syslog"
 )
 
 type Syslog struct {

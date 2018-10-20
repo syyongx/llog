@@ -1,9 +1,9 @@
 package types
 
 import (
-	"time"
 	"bytes"
 	"sync"
+	"time"
 )
 
 var recordPool *sync.Pool

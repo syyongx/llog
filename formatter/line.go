@@ -1,9 +1,9 @@
 package formatter
 
 import (
-	"strings"
 	"fmt"
 	"github.com/syyongx/llog/types"
+	"strings"
 )
 
 var DefaultFormat = "[%Datetime%] %Channel%.%LevelName%: %Message% %Context% %Extra%\n"

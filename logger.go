@@ -3,8 +3,8 @@ package llog
 import (
 	"errors"
 	"fmt"
-	"time"
 	"github.com/syyongx/llog/types"
+	"time"
 )
 
 // logger struct

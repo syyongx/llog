@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"time"
 	"github.com/syyongx/llog/formatter"
 	"github.com/syyongx/llog/types"
+	"time"
 )
 
 type Formattable struct {

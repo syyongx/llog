@@ -1,8 +1,8 @@
 package processor
 
 import (
-	"runtime"
 	"github.com/syyongx/llog/types"
+	"runtime"
 )
 
 // Get memory usage.

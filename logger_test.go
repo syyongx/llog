@@ -1,11 +1,11 @@
 package llog
 
 import (
-	"testing"
 	"fmt"
+	"github.com/syyongx/llog/formatter"
 	"github.com/syyongx/llog/handler"
 	"github.com/syyongx/llog/types"
-	"github.com/syyongx/llog/formatter"
+	"testing"
 	"time"
 )
 
