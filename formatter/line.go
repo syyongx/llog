@@ -28,26 +28,15 @@ func NewLine(format, dateFormat string) *Line {
 }
 
 func (l *Line) Format(record *types.Record) error {
-	output := l.format
-
-	if strings.Contains(l.format, "%Datetime%") {
-		output = strings.Replace(output, "%Datetime%", l.normalizeTime(record.Datetime), 1)
+	oldnew := []string{
+		"%Datetime%", l.normalizeTime(record.Datetime),
+		"%Channel%", record.Channel,
+		"%LevelName%", record.LevelName,
+		"%Message%", record.Message,
+		"%Context%", l.normalizeContext(record.Context),
+		"%Extra%", l.normalizeExtra(record.Extra),
 	}
-	if strings.Contains(l.format, "%Channel%") {
-		output = strings.Replace(output, "%Channel%", record.Channel, 1)
-	}
-	if strings.Contains(l.format, "%LevelName%") {
-		output = strings.Replace(output, "%LevelName%", record.LevelName, 1)
-	}
-	if strings.Contains(l.format, "%Message%") {
-		output = strings.Replace(output, "%Message%", record.Message, 1)
-	}
-	if strings.Contains(l.format, "%Context%") {
-		output = strings.Replace(output, "%Context%", l.normalizeContext(record.Context), 1)
-	}
-	if strings.Contains(l.format, "%Extra%") {
-		output = strings.Replace(output, "%Extra%", l.normalizeExtra(record.Extra), 1)
-	}
+	output := strings.NewReplacer(oldnew...).Replace(l.format)
 	record.Formatted.WriteString(output)
 
 	return nil

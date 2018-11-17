@@ -11,24 +11,23 @@ type File struct {
 	Processable
 	Formattable
 
-	Fd *os.File
+	Fd       *os.File
+	Path     string
+	FilePerm os.FileMode
 }
 
 // New file handler
-func NewFile(path string, level int, bubble bool, filePerm os.FileMode) (*File, error) {
-	fd, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, filePerm)
-	if err != nil {
-		return nil, err
-	}
+func NewFile(path string, level int, bubble bool, filePerm os.FileMode) *File {
 	f := &File{
-		Fd: fd,
+		Path:     path,
+		FilePerm: filePerm,
 	}
 	f.SetLevel(level)
 	f.SetBubble(bubble)
-	return f, nil
+	return f
 }
 
-// Handle
+// Handles a record.
 func (f *File) Handle(record *types.Record) bool {
 	if !f.IsHandling(record) {
 		return false
@@ -45,7 +44,7 @@ func (f *File) Handle(record *types.Record) bool {
 	return false == f.GetBubble()
 }
 
-// HandleBatch
+// Handles a set of records.
 func (f *File) HandleBatch(records []*types.Record) {
 	for _, record := range records {
 		f.Handle(record)
@@ -55,14 +54,25 @@ func (f *File) HandleBatch(records []*types.Record) {
 // Write to file.
 func (f *File) Write(record *types.Record) {
 	if f.Fd == nil {
-		return
+		fd, err := os.OpenFile(f.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, f.FilePerm)
+		if err != nil {
+			// ...
+		}
+		f.Fd = fd
 	}
-	f.Fd.Write(record.Formatted.Bytes())
-	//defer f.Close()
+	_, err := f.Fd.Write(record.Formatted.Bytes())
+	if err != nil {
+		//...
+	}
 }
 
 // Close writer
 func (f *File) Close() {
 	f.Fd.Close()
 	f.Fd = nil
+}
+
+// Crete directory
+func (f *File) createDir() error {
+	return nil
 }

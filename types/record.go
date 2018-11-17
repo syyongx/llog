@@ -32,7 +32,7 @@ type Record struct {
 
 // Get record from pool.
 func NewRecord() *Record {
-	record, ok := recordPool.Get().(*Record);
+	record, ok := recordPool.Get().(*Record)
 	if !ok {
 		record = new(Record)
 		//record.Buffer = new(bytes.Buffer)

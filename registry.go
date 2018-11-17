@@ -17,7 +17,7 @@ func (r *Registry) AddLogger(logger *Logger, name string, overwrite bool) error 
 		name = logger.GetName()
 	}
 	if _, ok := r.loggers[name]; ok && !overwrite {
-		return errors.New("Logger with the given name already exists")
+		return errors.New("logger with the given name already exists")
 	}
 	r.loggers[name] = logger
 	return nil
@@ -34,7 +34,7 @@ func (r *Registry) GetLogger(name string) (*Logger, error) {
 	if v, ok := r.loggers[name]; ok {
 		return v, nil
 	}
-	return nil, errors.New("Requested " + name + " logger instance is not in the registry")
+	return nil, errors.New("requested " + name + " logger instance is not in the registry")
 }
 
 // Removes instance from registry by name or instance

@@ -47,7 +47,7 @@ func (l *Logger) PushHandler(h types.IHandler) {
 // Pops a handler from the stack.
 func (l *Logger) PopHandler() (types.IHandler, error) {
 	if len(l.handlers) < 1 {
-		return nil, errors.New("You tried to pop from an empty handler slice.")
+		return nil, errors.New("you tried to pop from an empty handler slice")
 	}
 	first := l.handlers[0]
 	l.handlers = l.handlers[1:]
@@ -75,7 +75,7 @@ func (l *Logger) PushProcessor(p types.Processor) {
 // Pops a processor from the stack.
 func (l *Logger) PopProcessor() (types.Processor, error) {
 	if len(l.processors) < 1 {
-		return nil, errors.New("You tried to pop from an empty processor stack.")
+		return nil, errors.New("you tried to pop from an empty processor stack")
 	}
 	first := l.processors[0]
 	l.processors = l.processors[1:]
@@ -135,7 +135,7 @@ func (l *Logger) GetLevelName(level int) (string, error) {
 	if v, ok := l.levels[level]; ok {
 		return v, nil
 	}
-	return "", errors.New("Level is not defined")
+	return "", errors.New("level is not defined")
 }
 
 // Checks whether the Logger has a handler that listens on the given level.

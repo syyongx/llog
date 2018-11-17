@@ -1,7 +1,6 @@
 package llog
 
 import (
-	"fmt"
 	"github.com/syyongx/llog/formatter"
 	"github.com/syyongx/llog/handler"
 	"github.com/syyongx/llog/types"
@@ -11,13 +10,10 @@ import (
 
 func TestBasic(t *testing.T) {
 	logger := NewLogger("test")
-	h, err := handler.NewFile("/dev/null", types.WARNING, true, 0644)
-	buf := handler.NewBuffer(h, 1, types.WARNING, true, true)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	file := handler.NewFile("/dev/null", types.WARNING, true, 0660)
+	buf := handler.NewBuffer(file, 1, types.WARNING, true)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
-	h.SetFormatter(f)
+	file.SetFormatter(f)
 	logger.PushHandler(buf)
 	logger.Warning("xxx")
 	buf.Close()
@@ -25,15 +21,12 @@ func TestBasic(t *testing.T) {
 
 func BenchmarkBasic(b *testing.B) {
 	logger := NewLogger("test")
-	h, err := handler.NewFile("/dev/null", types.WARNING, true, 0644)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	file := handler.NewFile("/dev/null", types.WARNING, true, 0660)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
-	h.SetFormatter(f)
+	file.SetFormatter(f)
 	//buf := handler.NewBuffer(h, 1, types.WARNING, true, true)
 	//logger.PushHandler(buf)
-	logger.PushHandler(h)
+	logger.PushHandler(file)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			logger.Warning("xxx")
