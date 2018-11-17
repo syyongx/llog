@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/kataras/iris/core/errors"
+	"errors"
 	"github.com/syyongx/llog/types"
 	"os"
 	"path/filepath"
@@ -50,10 +50,10 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) error {
 	match, _ := regexp.MatchString("^2006(([/_.-]?01)([/_.-]?02)?)?$", dateFormat)
 	if !match {
-		return errors.New("Invalid date format")
+		return errors.New("invalid date format")
 	}
 	if n := strings.Index(filenameFormat, "{date}"); n < 0 {
-		return errors.New("Invalid filename format, format should contain at least {date}")
+		return errors.New("invalid filename format, format should contain at least {date}")
 	}
 
 	rf.filenameFormat = filenameFormat
@@ -110,11 +110,7 @@ func (rf *RotatingFile) rotate() error {
 	}
 	// Sorting the files by name to remove the older ones
 	sort.Strings(files)
-	n := 0
-	for _, file := range files {
-		if n++; n > rf.maxFiles {
-			break
-		}
+	for _, file := range files[:rf.maxFiles] {
 		os.Remove(file)
 	}
 
