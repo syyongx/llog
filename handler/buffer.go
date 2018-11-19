@@ -28,6 +28,8 @@ func NewBuffer(handler types.IHandler, bufferSize, level int, bubble bool) *Buff
 		for {
 			record := <-buf.buffer
 			if record == nil {
+				buf.handler.Close()
+				buf.close <- true
 				break
 			}
 			buf.handler.Handle(record)
@@ -39,11 +41,6 @@ func NewBuffer(handler types.IHandler, bufferSize, level int, bubble bool) *Buff
 
 // Handles a record.
 func (b *Buffer) Handle(record *types.Record) bool {
-	if record == nil {
-		b.handler.Close()
-		b.close <- true
-		return false
-	}
 	if !b.IsHandling(record) {
 		return false
 	}

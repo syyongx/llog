@@ -37,9 +37,8 @@ func (l *Line) Format(record *types.Record) error {
 		"%Extra%", l.normalizeExtra(record.Extra),
 	}
 	output := strings.NewReplacer(oldnew...).Replace(l.format)
-	record.Formatted.WriteString(output)
-
-	return nil
+	_, err := record.Formatted.WriteString(output)
+	return err
 }
 
 // Batch format records.

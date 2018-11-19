@@ -29,6 +29,30 @@ func NewNet(bufferSize int, persistent bool, level int, bubble bool) *Net {
 	return network
 }
 
+// Handles a record.
+func (n *Net) Handle(record *types.Record) bool {
+	if !n.IsHandling(record) {
+		return false
+	}
+	if n.processors != nil {
+		n.ProcessRecord(record)
+	}
+	err := n.GetFormatter().Format(record)
+	if err != nil {
+		return false
+	}
+	n.Write(record)
+
+	return false == n.GetBubble()
+}
+
+// Handles a set of records.
+func (n *Net) HandleBatch(records []*types.Record) {
+	for _, record := range records {
+		n.Handle(record)
+	}
+}
+
 // Write to network.
 func (n *Net) Write(record *types.Record) {
 	if !n.Persistent {

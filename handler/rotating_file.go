@@ -65,7 +65,7 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 
 // Handles a record.
 func (rf *RotatingFile) Handle(record *types.Record) bool {
-	rf.f.Handle(record)
+	return rf.f.Handle(record)
 }
 
 // Handles a set of records.
@@ -115,6 +115,7 @@ func (rf *RotatingFile) rotate() error {
 	}
 
 	rf.mustRotate = false
+	return nil
 }
 
 // Get timed filename

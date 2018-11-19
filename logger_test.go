@@ -10,7 +10,7 @@ import (
 
 func TestBasic(t *testing.T) {
 	logger := NewLogger("test")
-	file := handler.NewFile("/dev/null", types.WARNING, true, 0660)
+	file := handler.NewFile("/tmp/llog/go.log", types.WARNING, true, 0664)
 	buf := handler.NewBuffer(file, 1, types.WARNING, true)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	file.SetFormatter(f)

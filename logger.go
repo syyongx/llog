@@ -90,7 +90,7 @@ func (l *Logger) GetProcessor() []types.Processor {
 // Adds a log record.
 func (l *Logger) AddRecord(level int, message string) (bool, error) {
 	hKey := -1
-	record := types.NewRecord()
+	record := types.GetRecord()
 	defer types.ReleaseRecord(record)
 	record.Level = level
 	for i, v := range l.handlers {

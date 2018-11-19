@@ -29,6 +29,30 @@ func NewSyslog(priority syslog.Priority, tag string, level int, bubble bool) *Sy
 	return sys
 }
 
+// Handles a record.
+func (s *Syslog) Handle(record *types.Record) bool {
+	if !s.IsHandling(record) {
+		return false
+	}
+	if s.processors != nil {
+		s.ProcessRecord(record)
+	}
+	err := s.GetFormatter().Format(record)
+	if err != nil {
+		return false
+	}
+	s.Write(record)
+
+	return false == s.GetBubble()
+}
+
+// Handles a set of records.
+func (s *Syslog) HandleBatch(records []*types.Record) {
+	for _, record := range records {
+		s.Handle(record)
+	}
+}
+
 // Write to console.
 func (s *Syslog) Write(record *types.Record) {
 	if s.Writer == nil {

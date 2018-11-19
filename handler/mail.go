@@ -43,6 +43,30 @@ func NewMail(address, username, password, from, subject string, to []string, lev
 	return mail
 }
 
+// Handles a record.
+func (m *Mail) Handle(record *types.Record) bool {
+	if !m.IsHandling(record) {
+		return false
+	}
+	if m.processors != nil {
+		m.ProcessRecord(record)
+	}
+	err := m.GetFormatter().Format(record)
+	if err != nil {
+		return false
+	}
+	m.Write(record)
+
+	return false == m.GetBubble()
+}
+
+// Handles a set of records.
+func (m *Mail) HandleBatch(records []*types.Record) {
+	for _, record := range records {
+		m.Handle(record)
+	}
+}
+
 // Write to network.
 func (m *Mail) Write(record *types.Record) {
 	message := fmt.Sprintf("To: %v\r\nFrom: %v\r\nSubject: %v\r\nContent-Type: %v; charset=%v\r\n\r\n%v",
