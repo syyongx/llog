@@ -11,13 +11,13 @@ type Filter struct {
 }
 
 func NewFilter(handler types.IHandler, minLevels, maxLevels []int, bubble bool) *Filter {
-	f := &Filter{
+	filter := &Filter{
 		h: handler,
 	}
-	f.acceptedLevels = f.SetAcceptedLevels(minLevels, maxLevels)
-	f.SetBubble(bubble)
+	filter.acceptedLevels = filter.SetAcceptedLevels(minLevels, maxLevels)
+	filter.SetBubble(bubble)
 
-	return f
+	return filter
 }
 
 func (f *Filter) IsHandling(record *types.Record) bool {

@@ -7,9 +7,7 @@ import (
 )
 
 type Syslog struct {
-	Handler
-	Processable
-	Formattable
+	Processing
 
 	Writer *syslog.Writer
 }
@@ -19,33 +17,16 @@ type Syslog struct {
 // priority (a combination of the syslog facility and severity) and
 // prefix tag. If tag is empty, the os.Args[0] is used.
 func NewSyslog(priority syslog.Priority, tag string, level int, bubble bool) *Syslog {
-	s := &Syslog{}
+	sys := &Syslog{}
 	w, err := syslog.New(priority, tag)
 	if err != nil {
 		// ...
 	}
-	s.Writer = w
-	s.SetLevel(level)
-	s.SetBubble(bubble)
-	s.SetFormatter(s.GetDefaultFormatter())
-	return s
-}
-
-// Handle
-func (s *Syslog) Handle(record *types.Record) bool {
-	if !s.IsHandling(record) {
-		return false
-	}
-	if s.processors != nil {
-		s.ProcessRecord(record)
-	}
-	err := s.GetFormatter().Format(record)
-	if err != nil {
-		return false
-	}
-	s.Write(record)
-
-	return false == s.GetBubble()
+	sys.Writer = w
+	sys.SetLevel(level)
+	sys.SetBubble(bubble)
+	sys.SetFormatter(sys.GetDefaultFormatter())
+	return sys
 }
 
 // Write to console.
