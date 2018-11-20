@@ -9,9 +9,9 @@ import (
 type File struct {
 	Processing
 
-	Fd       *os.File
 	Path     string
 	FilePerm os.FileMode
+	Fd       *os.File
 }
 
 // New file handler
@@ -52,7 +52,6 @@ func (f *File) HandleBatch(records []*types.Record) {
 // Write to file.
 func (f *File) Write(record *types.Record) {
 	if f.Fd == nil {
-		// create dir.
 		fd, err := os.OpenFile(f.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, f.FilePerm)
 		if err != nil {
 			// ...
@@ -69,9 +68,4 @@ func (f *File) Write(record *types.Record) {
 func (f *File) Close() {
 	f.Fd.Close()
 	f.Fd = nil
-}
-
-// Crete directory
-func (f *File) createDir() error {
-	return nil
 }

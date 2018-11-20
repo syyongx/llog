@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/syyongx/llog/types"
 	"os"
 	"path/filepath"
@@ -17,7 +18,7 @@ import (
 // This rotation is only intended to be used as a workaround. Using logrotate to
 // handle the rotation is strongly encouraged when you can use it.
 type RotatingFile struct {
-	f File
+	*File
 
 	filename       string
 	maxFiles       int
@@ -37,12 +38,12 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 		filename:       filename,
 		maxFiles:       maxFiles,
 		filenameFormat: "{filename}-{date}",
-		dateFormat:     "2016-01-02",
-		nextRotation:   time.Now().AddDate(0, 0, 1).Day(),
+		dateFormat:     "2006-01-02",
+		nextRotation:   time.Now().AddDate(0, 0, 1).Day(), // tomorrow
 		perm:           filePerm,
 	}
-	rf.f.SetLevel(level)
-	rf.f.SetBubble(bubble)
+	path := rf.timedFilename()
+	rf.File = NewFile(path, level, bubble, filePerm)
 	return rf
 }
 
@@ -65,53 +66,73 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 
 // Handles a record.
 func (rf *RotatingFile) Handle(record *types.Record) bool {
-	return rf.f.Handle(record)
+	if !rf.IsHandling(record) {
+		return false
+	}
+	if rf.processors != nil {
+		rf.ProcessRecord(record)
+	}
+	err := rf.GetFormatter().Format(record)
+	if err != nil {
+		return false
+	}
+	rf.Write(record)
+
+	return false == rf.GetBubble()
 }
 
 // Handles a set of records.
 func (rf *RotatingFile) HandleBatch(records []*types.Record) {
-	rf.f.HandleBatch(records)
+	for _, record := range records {
+		rf.Handle(record)
+	}
 }
 
 // Write to file.
 func (rf *RotatingFile) Write(record *types.Record) {
-	if rf.mustRotate {
-		_, err := os.Stat(rf.filename)
-		if err != nil && os.IsNotExist(err) {
-			rf.mustRotate = true
-		}
-	}
 	if rf.nextRotation < record.Datetime.Day() {
 		rf.mustRotate = true
 		rf.Close()
 	}
 
-	rf.f.Write(record)
+	rf.File.Write(record)
 }
 
 // Closes the handler.
 func (rf *RotatingFile) Close() {
-	rf.f.Close()
+	rf.File.Close()
+
+	if rf.mustRotate {
+		rf.rotate()
+	}
 }
 
 // Rotates the files.
 func (rf *RotatingFile) rotate() error {
-	rf.filename = rf.getTimedFilename()
+	// update path
+	rf.Path = rf.timedFilename()
+	rf.Fd = nil
+	// tomorrow
 	rf.nextRotation = time.Now().AddDate(0, 0, 1).Day()
+	// skip GC of old logs if files are unlimited
 	if rf.maxFiles == 0 {
 		return nil
 	}
-	files, err := filepath.Glob(rf.getGlobPattern())
+	files, err := filepath.Glob(rf.globPattern())
 	if err != nil {
 		return err
 	}
 	if len(files) > rf.maxFiles {
+		// no files to remove
 		return nil
 	}
 	// Sorting the files by name to remove the older ones
 	sort.Strings(files)
 	for _, file := range files[:rf.maxFiles] {
-		os.Remove(file)
+		err := os.Remove(file)
+		if err != nil {
+			return err
+		}
 	}
 
 	rf.mustRotate = false
@@ -119,10 +140,13 @@ func (rf *RotatingFile) rotate() error {
 }
 
 // Get timed filename
-func (rf *RotatingFile) getTimedFilename() string {
+func (rf *RotatingFile) timedFilename() string {
 	dir := filepath.Dir(rf.filename)
 	basename := filepath.Base(rf.filename)
 	ext := filepath.Ext(rf.filename)
+	if ext != "" {
+		basename = basename[:strings.Index(basename, ext)]
+	}
 
 	date := time.Unix(time.Now().Unix(), 0).Format(rf.dateFormat)
 	timedFilename := strings.NewReplacer("{filename}", basename, "{date}", date).Replace(dir + "/" + rf.filenameFormat)
@@ -132,13 +156,14 @@ func (rf *RotatingFile) getTimedFilename() string {
 }
 
 // Get blob pattern
-func (rf *RotatingFile) getGlobPattern() string {
+func (rf *RotatingFile) globPattern() string {
 	dir := filepath.Dir(rf.filename)
 	basename := filepath.Base(rf.filename)
 	ext := filepath.Ext(rf.filename)
 
 	glob := strings.NewReplacer("{filename}", basename, "{date}", "*").Replace(dir + "/" + rf.filenameFormat)
 	glob += ext
+	fmt.Println(glob)
 
 	return glob
 }

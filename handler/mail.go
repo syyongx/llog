@@ -73,8 +73,8 @@ func (m *Mail) Write(record *types.Record) {
 		strings.Join(m.To, ";"),
 		m.From,
 		m.Subject,
-		m.GetContentType(),
-		m.GetEncoding(),
+		m.ContentType(),
+		m.Encoding(),
 		record.Formatted.String(),
 	)
 	err := smtp.SendMail(m.Addr, m.auth, m.From, m.To, []byte(message))
@@ -83,26 +83,26 @@ func (m *Mail) Write(record *types.Record) {
 	}
 }
 
-// The content type of the email - Defaults to text/plain. Use text/html for HTML
+// Set the content type of the email - Defaults to text/plain. Use text/html for HTML
 func (m *Mail) SetContentType(contentType string) {
 	m.contentType = contentType
 }
 
-// The content type of the email - Defaults to text/plain. Use text/html for HTML
-func (m *Mail) GetContentType() string {
+// Get the content type of the email - Defaults to text/plain. Use text/html for HTML
+func (m *Mail) ContentType() string {
 	if m.contentType == "" {
 		return "text/plain"
 	}
 	return m.contentType
 }
 
-// The encoding for the message - Defaults to UTF-8
+// Set the encoding for the message - Defaults to UTF-8
 func (m *Mail) SetEncoding(encoding string) {
 	m.encoding = encoding
 }
 
-// The encoding for the message - Defaults to UTF-8
-func (m *Mail) GetEncoding() string {
+// Get the encoding for the message - Defaults to UTF-8
+func (m *Mail) Encoding() string {
 	if m.encoding == "" {
 		return "UTF-8"
 	}

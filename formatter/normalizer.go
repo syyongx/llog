@@ -25,7 +25,7 @@ func (n *Normalizer) SetDateFormat(dateFormat string) {
 }
 
 // Get dateFormat
-func (n *Normalizer) GetDateFormat() string {
+func (n *Normalizer) DateFormat() string {
 	return n.dateFormat
 }
 
@@ -41,7 +41,7 @@ func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
 		}
 	}
 	// fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.RecordExtra)));
-	return string(n.ToJson(extra))
+	return string(n.Json(extra))
 }
 
 // Normalize context of record
@@ -55,7 +55,7 @@ func (n *Normalizer) normalizeContext(ctx types.RecordContext) string {
 			delete(ctx, k)
 		}
 	}
-	return string(n.ToJson(ctx))
+	return string(n.Json(ctx))
 }
 
 // Normalize float
@@ -80,7 +80,7 @@ func (n *Normalizer) normalizeFloat(f float64) string {
 }
 
 // Return the JSON representation of a value
-func (n *Normalizer) ToJson(data interface{}) []byte {
+func (n *Normalizer) Json(data interface{}) []byte {
 	v, err := json.Marshal(data)
 	if err != nil {
 		return []byte(err.Error())

@@ -19,6 +19,17 @@ func TestBasic(t *testing.T) {
 	buf.Close()
 }
 
+func TestRotatingFile(t *testing.T) {
+	logger := NewLogger("test")
+	r := handler.NewRotatingFile("/tmp/llog/go.log", 2, types.WARNING, true, 0664)
+	buf := handler.NewBuffer(r, 1, types.WARNING, true)
+	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
+	r.SetFormatter(f)
+	logger.PushHandler(buf)
+	logger.Warning("xxx")
+	buf.Close()
+}
+
 func BenchmarkBasic(b *testing.B) {
 	logger := NewLogger("test")
 	file := handler.NewFile("/dev/null", types.WARNING, true, 0660)
