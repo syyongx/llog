@@ -9,73 +9,50 @@ import (
 type Syslog struct {
 	Processing
 
-	Writer *syslog.Writer
+	SysWriter *syslog.Writer
 }
 
 // New establishes a new connection to the system log daemon. Each
 // write to the returned writer sends a log message with the given
 // priority (a combination of the syslog facility and severity) and
 // prefix tag. If tag is empty, the os.Args[0] is used.
-func NewSyslog(priority syslog.Priority, tag string, level int, bubble bool) *Syslog {
+func NewSyslog(priority syslog.Priority, tag string, level int, bubble bool) (*Syslog, error) {
 	sys := &Syslog{}
 	w, err := syslog.New(priority, tag)
 	if err != nil {
-		// ...
+		return nil, err
 	}
-	sys.Writer = w
+	sys.SysWriter = w
 	sys.SetLevel(level)
 	sys.SetBubble(bubble)
 	sys.SetFormatter(sys.GetDefaultFormatter())
-	return sys
-}
-
-// Handles a record.
-func (s *Syslog) Handle(record *types.Record) bool {
-	if !s.IsHandling(record) {
-		return false
-	}
-	if s.processors != nil {
-		s.ProcessRecord(record)
-	}
-	err := s.GetFormatter().Format(record)
-	if err != nil {
-		return false
-	}
-	s.Write(record)
-
-	return false == s.GetBubble()
-}
-
-// Handles a set of records.
-func (s *Syslog) HandleBatch(records []*types.Record) {
-	for _, record := range records {
-		s.Handle(record)
-	}
+	sys.Writer = sys.Write
+	return sys, nil
 }
 
 // Write to console.
 func (s *Syslog) Write(record *types.Record) {
-	if s.Writer == nil {
+	if s.SysWriter == nil {
 		return
 	}
 	var fn func(m string) error
 	switch record.Level {
 	case types.DEBUG:
-		fn = s.Writer.Debug
+		fn = s.SysWriter.Debug
 	case types.INFO:
-		fn = s.Writer.Info
+		fn = s.SysWriter.Info
 	case types.NOTICE:
-		fn = s.Writer.Notice
+		fn = s.SysWriter.Notice
 	case types.WARNING:
-		fn = s.Writer.Warning
+		fn = s.SysWriter.Warning
 	case types.ERROR:
-		fn = s.Writer.Err
+		fn = s.SysWriter.Err
 	case types.CRITICAL:
-		fn = s.Writer.Crit
+		fn = s.SysWriter.Crit
 	case types.ALERT:
-		fn = s.Writer.Alert
+		fn = s.SysWriter.Alert
 	case types.EMERGENCY:
-		fn = s.Writer.Emerg
+		fn = s.SysWriter.Emerg
 	}
 	fn(record.Formatted.String())
 }

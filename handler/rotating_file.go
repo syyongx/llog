@@ -13,6 +13,12 @@ import (
 	"time"
 )
 
+const (
+	FilePerDay   string = "2006-01-02"
+	FilePerMonth string = "2006-01"
+	FilePerYear  string = "2006"
+)
+
 // Stores logs to files that are rotated every day and a limited number of files are kept.
 //
 // This rotation is only intended to be used as a workaround. Using logrotate to
@@ -38,7 +44,7 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 		filename:       filename,
 		maxFiles:       maxFiles,
 		filenameFormat: "{filename}-{date}",
-		dateFormat:     "2006-01-02",
+		dateFormat:     FilePerDay,
 		nextRotation:   time.Now().AddDate(0, 0, 1).Day(), // tomorrow
 		perm:           filePerm,
 	}
@@ -50,6 +56,7 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 
 // Set filename format.
 func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) error {
+	// validate data format
 	match, _ := regexp.MatchString("^2006(([/_.-]?01)([/_.-]?02)?)?$", dateFormat)
 	if !match {
 		return errors.New("invalid date format")
@@ -60,6 +67,7 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 
 	rf.filenameFormat = filenameFormat
 	rf.dateFormat = dateFormat
+	rf.Path = rf.timedFilename()
 	rf.Close()
 
 	return nil
