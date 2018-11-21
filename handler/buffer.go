@@ -6,19 +6,18 @@ import (
 
 type Buffer struct {
 	Handler
-	Processable
 
 	handler types.IHandler
-	buffer  chan *types.Record
+	records chan *types.Record
 	close   chan bool
 }
 
-// New buffer handler
-// bufferSize: buffer size.
-func NewBuffer(handler types.IHandler, bufferSize, level int, bubble bool) *Buffer {
+// New async handler
+// bufSize: channel buffer size.
+func NewBuffer(handler types.IHandler, bufSize, level int, bubble bool) *Buffer {
 	buf := &Buffer{
 		handler: handler,
-		buffer:  make(chan *types.Record, bufferSize),
+		records: make(chan *types.Record, bufSize),
 		close:   make(chan bool, 0),
 	}
 	buf.SetLevel(level)
@@ -26,7 +25,7 @@ func NewBuffer(handler types.IHandler, bufferSize, level int, bubble bool) *Buff
 
 	go func() {
 		for {
-			record := <-buf.buffer
+			record := <-buf.records
 			if record == nil {
 				buf.handler.Close()
 				buf.close <- true
@@ -45,7 +44,7 @@ func (b *Buffer) Handle(record *types.Record) bool {
 		return false
 	}
 
-	b.buffer <- record
+	b.records <- record
 
 	return false == b.GetBubble()
 }
@@ -59,6 +58,6 @@ func (b *Buffer) HandleBatch(records []*types.Record) {
 
 // close
 func (b *Buffer) Close() {
-	b.buffer <- nil
+	b.records <- nil
 	<-b.close
 }

@@ -3,6 +3,7 @@ package formatter
 import (
 	"fmt"
 	"github.com/syyongx/llog/types"
+	"strconv"
 	"strings"
 )
 
@@ -54,11 +55,20 @@ func (l Line) FormatBatch(records []*types.Record) error {
 
 // stringfy
 func (l *Line) String(data interface{}) string {
-	switch data.(type) {
+	switch v := data.(type) {
 	case string:
-		return data.(string)
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, complex64, complex128:
-		return fmt.Sprintf("%v", data)
+		return l.escape(v)
+	case bool:
+		return strconv.FormatBool(v)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		return fmt.Sprintf("%d", v)
+	case float32, float64, complex64, complex128:
+		return fmt.Sprintf("%v", v)
 	}
 	return string(l.Json(data))
+}
+
+// escape string
+func (l *Line) escape(str string) string {
+	return str
 }

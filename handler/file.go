@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bufio"
 	"github.com/syyongx/llog/types"
 	"os"
 )
@@ -12,6 +13,7 @@ type File struct {
 	Path     string
 	FilePerm os.FileMode
 	Fd       *os.File
+	ioWriter *bufio.Writer
 }
 
 // New file handler
@@ -34,6 +36,7 @@ func (f *File) Write(record *types.Record) {
 			// ...
 		}
 		f.Fd = fd
+		f.ioWriter = bufio.NewWriterSize(f.Fd, 1)
 	}
 	_, err := f.Fd.Write(record.Formatted.Bytes())
 	if err != nil {

@@ -2,12 +2,12 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"github.com/syyongx/llog/types"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -45,9 +45,9 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 		maxFiles:       maxFiles,
 		filenameFormat: "{filename}-{date}",
 		dateFormat:     FilePerDay,
-		nextRotation:   time.Now().AddDate(0, 0, 1).Day(), // tomorrow
 		perm:           filePerm,
 	}
+	rf.nextRotation = rf.day(time.Now().AddDate(0, 0, 1))
 	path := rf.timedFilename()
 	rf.File = NewFile(path, level, bubble, filePerm)
 	rf.File.Writer = rf.Write
@@ -75,7 +75,7 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 
 // Write to file.
 func (rf *RotatingFile) Write(record *types.Record) {
-	if rf.nextRotation < record.Datetime.Day() {
+	if rf.nextRotation < rf.day(record.Datetime) {
 		rf.mustRotate = true
 		rf.Close()
 	}
@@ -98,27 +98,13 @@ func (rf *RotatingFile) rotate() error {
 	rf.Path = rf.timedFilename()
 	rf.Fd = nil
 	// tomorrow
-	rf.nextRotation = time.Now().AddDate(0, 0, 1).Day()
-	// skip GC of old logs if files are unlimited
+	rf.nextRotation = rf.day(time.Now().AddDate(0, 0, 1))
+	// skip remove old files if files are unlimited
 	if rf.maxFiles == 0 {
 		return nil
 	}
-	files, err := filepath.Glob(rf.globPattern())
-	if err != nil {
-		return err
-	}
-	if len(files) > rf.maxFiles {
-		// no files to remove
-		return nil
-	}
-	// Sorting the files by name to remove the older ones
-	sort.Strings(files)
-	for _, file := range files[:rf.maxFiles] {
-		err := os.Remove(file)
-		if err != nil {
-			return err
-		}
-	}
+	// Remove old files.
+	go rf.removeOldLogs()
 
 	rf.mustRotate = false
 	return nil
@@ -145,10 +131,34 @@ func (rf *RotatingFile) globPattern() string {
 	dir := filepath.Dir(rf.filename)
 	basename := filepath.Base(rf.filename)
 	ext := filepath.Ext(rf.filename)
+	if ext != "" {
+		basename = basename[:strings.Index(basename, ext)]
+	}
 
 	glob := strings.NewReplacer("{filename}", basename, "{date}", "*").Replace(dir + "/" + rf.filenameFormat)
 	glob += ext
-	fmt.Println(glob)
 
 	return glob
+}
+
+// get tomorrow day
+func (rf *RotatingFile) day(t time.Time) int {
+	day, _ := strconv.Atoi(t.Format("20060102"))
+	return day
+}
+
+// Remove old logs.
+func (rf *RotatingFile) removeOldLogs() {
+	files, err := filepath.Glob(rf.globPattern())
+	if err != nil {
+		return
+	}
+	if len(files) <= rf.maxFiles {
+		return
+	}
+	// Sorting the files by name to remove the older ones
+	sort.Strings(files)
+	for _, file := range files[:len(files)-rf.maxFiles] {
+		os.Remove(file)
+	}
 }
