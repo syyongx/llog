@@ -22,31 +22,8 @@ func NewFile(path string, level int, bubble bool, filePerm os.FileMode) *File {
 	}
 	file.SetLevel(level)
 	file.SetBubble(bubble)
+	file.Writer = file.Write
 	return file
-}
-
-// Handles a record.
-func (f *File) Handle(record *types.Record) bool {
-	if !f.IsHandling(record) {
-		return false
-	}
-	if f.processors != nil {
-		f.ProcessRecord(record)
-	}
-	err := f.GetFormatter().Format(record)
-	if err != nil {
-		return false
-	}
-	f.Write(record)
-
-	return false == f.GetBubble()
-}
-
-// Handles a set of records.
-func (f *File) HandleBatch(records []*types.Record) {
-	for _, record := range records {
-		f.Handle(record)
-	}
 }
 
 // Write to file.

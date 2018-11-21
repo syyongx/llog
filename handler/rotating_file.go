@@ -44,6 +44,7 @@ func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm
 	}
 	path := rf.timedFilename()
 	rf.File = NewFile(path, level, bubble, filePerm)
+	rf.File.Writer = rf.Write
 	return rf
 }
 
@@ -62,30 +63,6 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 	rf.Close()
 
 	return nil
-}
-
-// Handles a record.
-func (rf *RotatingFile) Handle(record *types.Record) bool {
-	if !rf.IsHandling(record) {
-		return false
-	}
-	if rf.processors != nil {
-		rf.ProcessRecord(record)
-	}
-	err := rf.GetFormatter().Format(record)
-	if err != nil {
-		return false
-	}
-	rf.Write(record)
-
-	return false == rf.GetBubble()
-}
-
-// Handles a set of records.
-func (rf *RotatingFile) HandleBatch(records []*types.Record) {
-	for _, record := range records {
-		rf.Handle(record)
-	}
 }
 
 // Write to file.

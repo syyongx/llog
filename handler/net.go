@@ -20,37 +20,14 @@ type Net struct {
 }
 
 func NewNet(bufferSize int, persistent bool, level int, bubble bool) *Net {
-	network := &Net{
+	net := &Net{
 		BufferSize: bufferSize,
 		Persistent: persistent,
 	}
-	network.SetLevel(level)
-	network.SetBubble(bubble)
-	return network
-}
-
-// Handles a record.
-func (n *Net) Handle(record *types.Record) bool {
-	if !n.IsHandling(record) {
-		return false
-	}
-	if n.processors != nil {
-		n.ProcessRecord(record)
-	}
-	err := n.GetFormatter().Format(record)
-	if err != nil {
-		return false
-	}
-	n.Write(record)
-
-	return false == n.GetBubble()
-}
-
-// Handles a set of records.
-func (n *Net) HandleBatch(records []*types.Record) {
-	for _, record := range records {
-		n.Handle(record)
-	}
+	net.SetLevel(level)
+	net.SetBubble(bubble)
+	net.Writer = net.Write
+	return net
 }
 
 // Write to network.
