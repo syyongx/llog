@@ -20,14 +20,14 @@ type Net struct {
 }
 
 func NewNet(bufferSize int, persistent bool, level int, bubble bool) *Net {
-	net := &Net{
+	n := &Net{
 		BufferSize: bufferSize,
 		Persistent: persistent,
 	}
-	net.SetLevel(level)
-	net.SetBubble(bubble)
-	net.Writer = net.Write
-	return net
+	n.SetLevel(level)
+	n.SetBubble(bubble)
+	n.Writer = n.Write
+	return n
 }
 
 // Write to network.
