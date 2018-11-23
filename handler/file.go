@@ -2,7 +2,7 @@ package handler
 
 import (
 	"bufio"
-	"github.com/kataras/iris/core/errors"
+	"errors"
 	"github.com/syyongx/llog/types"
 	"os"
 	"sync"
