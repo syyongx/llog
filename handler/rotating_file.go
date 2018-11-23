@@ -32,24 +32,22 @@ type RotatingFile struct {
 	nextRotation   int
 	filenameFormat string
 	dateFormat     string
-	perm           os.FileMode
 	sync.Mutex
 }
 
 // level: The minimum logging level at which this handler will be triggered
 // bubble: Whether the messages that are handled can bubble up the stack or not
 // filePerm: Optional file permissions (default (0644) are only for owner read/write)
-func NewRotatingFile(filename string, maxFiles, level int, bubble bool, filePerm os.FileMode) *RotatingFile {
+func NewRotatingFile(filename string, filePerm os.FileMode, maxFiles, level int, bubble bool) *RotatingFile {
 	rf := &RotatingFile{
 		filename:       filename,
 		maxFiles:       maxFiles,
 		filenameFormat: "{filename}-{date}",
 		dateFormat:     FilePerDay,
-		perm:           filePerm,
 	}
 	rf.nextRotation = rf.day(time.Now().AddDate(0, 0, 1))
 	path := rf.timedFilename()
-	rf.File = NewFile(path, level, bubble, filePerm)
+	rf.File = NewFile(path, filePerm, level, bubble)
 	rf.File.Writer = rf.Write
 	return rf
 }
@@ -75,10 +73,13 @@ func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) err
 
 // Write to file.
 func (rf *RotatingFile) Write(record *types.Record) {
+	// need rotate
+	rf.Lock()
 	if rf.nextRotation < rf.day(record.Datetime) {
 		rf.mustRotate = true
 		rf.Close()
 	}
+	rf.Unlock()
 
 	rf.File.Write(record)
 }
@@ -88,6 +89,7 @@ func (rf *RotatingFile) Close() {
 	rf.File.Close()
 
 	if rf.mustRotate {
+		// do ratate
 		rf.rotate()
 	}
 }
@@ -103,7 +105,7 @@ func (rf *RotatingFile) rotate() error {
 	if rf.maxFiles == 0 {
 		return nil
 	}
-	// Remove old files.
+	// async remove old files.
 	go rf.removeOldLogs()
 
 	rf.mustRotate = false

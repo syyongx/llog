@@ -10,7 +10,7 @@ import (
 
 func TestBasic(t *testing.T) {
 	logger := NewLogger("test")
-	file := handler.NewFile("/tmp/llog/go.log", types.WARNING, true, 0664)
+	file := handler.NewFile("/tmp/llog/go.log", 0664, types.WARNING, true)
 	buf := handler.NewBuffer(file, 1, types.WARNING, true)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	file.SetFormatter(f)
@@ -21,7 +21,7 @@ func TestBasic(t *testing.T) {
 
 func TestRotatingFile(t *testing.T) {
 	logger := NewLogger("test")
-	r := handler.NewRotatingFile("/tmp/llog/go.log", 2, types.WARNING, true, 0664)
+	r := handler.NewRotatingFile("/tmp/llog/go.log", 0664, 2, types.WARNING, true)
 	buf := handler.NewBuffer(r, 1, types.WARNING, true)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	r.SetFormatter(f)
@@ -32,7 +32,7 @@ func TestRotatingFile(t *testing.T) {
 
 func BenchmarkBasic(b *testing.B) {
 	logger := NewLogger("test")
-	file := handler.NewFile("/dev/null", types.WARNING, true, 0660)
+	file := handler.NewFile("/dev/null", 0660, types.WARNING, true)
 	f := formatter.NewLine("%Datetime% [%LevelName%] [%Channel%] %Message%\n", time.RFC3339)
 	file.SetFormatter(f)
 	//buf := handler.NewBuffer(h, 1, types.WARNING, true, true)
