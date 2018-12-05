@@ -5,6 +5,7 @@ import (
 	"net"
 )
 
+// Net handler struct definition
 type Net struct {
 	Processing
 
@@ -19,6 +20,7 @@ type Net struct {
 	conn       net.Conn
 }
 
+// NewNet new net handler
 func NewNet(bufferSize int, persistent bool, level int, bubble bool) *Net {
 	n := &Net{
 		BufferSize: bufferSize,

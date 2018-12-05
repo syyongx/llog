@@ -6,21 +6,22 @@ import (
 	"time"
 )
 
+// Formattable struct definition
 type Formattable struct {
 	formatter types.Formatter
 }
 
-// Set formatter
+// SetFormatter Set formatter
 func (f *Formattable) SetFormatter(formatter types.Formatter) {
 	f.formatter = formatter
 }
 
-// Get formatter
+// GetFormatter Get formatter
 func (f *Formattable) GetFormatter() types.Formatter {
 	return f.formatter
 }
 
-//Gets the default formatter.
+// GetDefaultFormatter Gets the default formatter.
 func (f *Formattable) GetDefaultFormatter() types.Formatter {
 	return formatter.NewLine(formatter.DefaultFormat, time.RFC3339)
 }

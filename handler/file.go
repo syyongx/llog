@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
+// FlushMode type
 type FlushMode uint8
 
+// available FlushMode values
 const (
 	FlushModeTicker = iota + 1
 	FlushModeLimit
@@ -26,6 +28,7 @@ type File struct {
 	Bufio
 }
 
+// Bufio struct definition
 type Bufio struct {
 	sync.Mutex
 
@@ -36,7 +39,7 @@ type Bufio struct {
 	ioWriter      *bufio.Writer
 }
 
-// New file handler
+// NewFile New file handler
 func NewFile(path string, filePerm os.FileMode, level int, bubble bool) *File {
 	file := &File{
 		Path:     path,
@@ -49,7 +52,7 @@ func NewFile(path string, filePerm os.FileMode, level int, bubble bool) *File {
 	return file
 }
 
-// Set flush config.
+// SetBufio Set flush config.
 func (f *File) SetBufio(size int, mode FlushMode, interval time.Duration) error {
 	if size < 0 {
 		return errors.New("size invalid")
@@ -102,7 +105,7 @@ func (f *File) Write(record *types.Record) {
 	}
 }
 
-// flush
+// Flush flush
 func (f *File) Flush() (err error) {
 	if !f.useBufio {
 		return

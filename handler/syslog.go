@@ -6,13 +6,14 @@ import (
 	"log/syslog"
 )
 
+// Syslog struct definition
 type Syslog struct {
 	Processing
 
 	SysWriter *syslog.Writer
 }
 
-// New establishes a new connection to the system log daemon. Each
+// NewSyslog New establishes a new connection to the system log daemon. Each
 // write to the returned writer sends a log message with the given
 // priority (a combination of the syslog facility and severity) and
 // prefix tag. If tag is empty, the os.Args[0] is used.
@@ -57,7 +58,7 @@ func (s *Syslog) Write(record *types.Record) {
 	fn(record.Formatted.String())
 }
 
-// Gets the default syslog formatter.
+// GetDefaultFormatter Gets the default syslog formatter.
 func (s *Syslog) GetDefaultFormatter() types.Formatter {
 	return formatter.NewLine("%Channel%.%LevelName%: %Message% %Context% %Extra%", "")
 }

@@ -2,6 +2,7 @@ package handler
 
 import "github.com/syyongx/llog/types"
 
+// Processing struct definition
 type Processing struct {
 	Handler
 	Processable
@@ -10,7 +11,7 @@ type Processing struct {
 	Writer func(*types.Record)
 }
 
-// Handles a record.
+// Handle a record.
 func (p *Processing) Handle(record *types.Record) bool {
 	if !p.IsHandling(record) {
 		return false
@@ -27,7 +28,7 @@ func (p *Processing) Handle(record *types.Record) bool {
 	return false == p.GetBubble()
 }
 
-// Handles a set of records.
+// HandleBatch Handles a set of records.
 func (p *Processing) HandleBatch(records []*types.Record) {
 	for _, record := range records {
 		p.Handle(record)

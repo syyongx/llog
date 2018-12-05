@@ -1,3 +1,8 @@
+// Package llog is a log tool library. php Monolog implementation in Go.
+// Source code and other details for the project are available at GitHub:
+//
+//	https://github.com/syyongx/llog
+//
 package llog
 
 import (
