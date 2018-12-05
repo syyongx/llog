@@ -4,6 +4,7 @@ import (
 	"github.com/syyongx/llog/types"
 )
 
+// DefaultFields for a log record
 var DefaultFields = []string{
 	"Datetime",
 	"Channel",
@@ -13,6 +14,7 @@ var DefaultFields = []string{
 	"Extra",
 }
 
+// Json struct definition
 type Json struct {
 	Normalizer
 
@@ -20,7 +22,7 @@ type Json struct {
 	appendNewline bool
 }
 
-// appendNewline: Is append new line.
+// NewJson appendNewline: Is append new line.
 func NewJson(fields []string, appendNewline bool) *Json {
 	if fields == nil {
 		fields = DefaultFields
@@ -32,6 +34,7 @@ func NewJson(fields []string, appendNewline bool) *Json {
 	return j
 }
 
+// IsAppendNewLine is append new line
 func (j *Json) IsAppendNewLine() bool {
 	return j.appendNewline
 }
@@ -64,7 +67,7 @@ func (j *Json) Format(record *types.Record) error {
 	return nil
 }
 
-// Format batch record
+// FormatBatch Format batch record
 func (j *Json) FormatBatch(records []*types.Record) error {
 	for _, record := range records {
 		err := j.Format(record)
