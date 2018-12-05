@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Normalize incoming records to remove objects/resources so it's easier to dump to various targets
+// Normalizer Normalizes incoming records to remove objects/resources so it's easier to dump to various targets
 type Normalizer struct {
 	dateFormat string
 }
@@ -42,7 +42,7 @@ func (n *Normalizer) normalizeExtra(extra types.RecordExtra) string {
 		}
 	}
 	// fmt.Sprintf("Over 1000 items (%d total), aborting normalization", len(data.(types.RecordExtra)));
-	return string(n.Json(extra))
+	return string(n.JSON(extra))
 }
 
 // Normalize context of record
@@ -56,7 +56,7 @@ func (n *Normalizer) normalizeContext(ctx types.RecordContext) string {
 			delete(ctx, k)
 		}
 	}
-	return string(n.Json(ctx))
+	return string(n.JSON(ctx))
 }
 
 // Normalize float
@@ -81,8 +81,8 @@ func (n *Normalizer) normalizeFloat(f float64) string {
 	return strconv.FormatFloat(f, 'f', 3, 64)
 }
 
-// Json Return the JSON representation of a value
-func (n *Normalizer) Json(data interface{}) []byte {
+// JSON Return the JSON representation of a value
+func (n *Normalizer) JSON(data interface{}) []byte {
 	v, err := json.Marshal(data)
 	if err != nil {
 		return []byte(err.Error())

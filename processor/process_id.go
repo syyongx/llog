@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// Get process id.
-var ProcessId = func(record *types.Record) {
+// ProcessID Get process ID.
+var ProcessID = func(record *types.Record) {
 	record.Extra["Pid"] = os.Getpid()
 }

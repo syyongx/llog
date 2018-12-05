@@ -1,5 +1,6 @@
 package types
 
+// log levels
 const (
 	DEBUG     = 100
 	INFO      = 200

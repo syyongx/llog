@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// Uniqid processor.
-var Uid = func(record *types.Record) {
+// UID Uniqid processor.
+var UID = func(record *types.Record) {
 	now := time.Now()
 	sec := now.Unix()
 	usec := now.UnixNano() % 0x100000

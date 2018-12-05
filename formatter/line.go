@@ -19,6 +19,7 @@ type Line struct {
 	format string
 }
 
+// NewLine new line
 func NewLine(format, dateFormat string) *Line {
 	if format == "" {
 		format = DefaultFormat
@@ -68,7 +69,7 @@ func (l *Line) String(data interface{}) string {
 	case float32, float64, complex64, complex128:
 		return fmt.Sprintf("%v", v)
 	}
-	return string(l.Json(data))
+	return string(l.JSON(data))
 }
 
 // escape string

@@ -18,9 +18,12 @@ func init() {
 	}
 }
 
+// RecordContext record context map
 type RecordContext map[string]interface{}
+// RecordExtra record extra map
 type RecordExtra map[string]interface{}
 
+// Record struct definition
 type Record struct {
 	Level     int
 	LevelName string
@@ -32,14 +35,14 @@ type Record struct {
 	Formatted *bytes.Buffer
 }
 
-// Get record from pool.
+// NewRecord Get record from pool.
 func NewRecord() *Record {
 	record := new(Record)
 	record.Formatted = new(bytes.Buffer)
 	return record
 }
 
-// Get record
+// GetRecord Get record
 func GetRecord() *Record {
 	record, ok := recordPool.Get().(*Record)
 	if !ok {
@@ -48,7 +51,7 @@ func GetRecord() *Record {
 	return record
 }
 
-// Put record to pool.
+// ReleaseRecord Put record to pool.
 func ReleaseRecord(record *Record) {
 	if record == nil {
 		return
