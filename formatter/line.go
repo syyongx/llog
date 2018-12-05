@@ -7,8 +7,10 @@ import (
 	"strings"
 )
 
+// DefaultFormat for a record
 var DefaultFormat = "[%Datetime%] %Channel%.%LevelName%: %Message% %Context% %Extra%\n"
 
+// Line struct definition
 // Formats incoming records into a one-line string
 // This is especially useful for logging to files
 type Line struct {
@@ -17,6 +19,7 @@ type Line struct {
 	format string
 }
 
+// NewLine new line
 func NewLine(format, dateFormat string) *Line {
 	if format == "" {
 		format = DefaultFormat
@@ -28,6 +31,7 @@ func NewLine(format, dateFormat string) *Line {
 	return l
 }
 
+// Format a log record
 func (l *Line) Format(record *types.Record) error {
 	oldnew := []string{
 		"%Datetime%", l.normalizeTime(record.Datetime),
@@ -42,7 +46,7 @@ func (l *Line) Format(record *types.Record) error {
 	return err
 }
 
-// Batch format records.
+// FormatBatch Batch format records.
 func (l Line) FormatBatch(records []*types.Record) error {
 	for _, record := range records {
 		err := l.Format(record)
@@ -53,7 +57,7 @@ func (l Line) FormatBatch(records []*types.Record) error {
 	return nil
 }
 
-// stringfy
+// String stringfy
 func (l *Line) String(data interface{}) string {
 	switch v := data.(type) {
 	case string:
@@ -65,7 +69,7 @@ func (l *Line) String(data interface{}) string {
 	case float32, float64, complex64, complex128:
 		return fmt.Sprintf("%v", v)
 	}
-	return string(l.Json(data))
+	return string(l.JSON(data))
 }
 
 // escape string

@@ -1,10 +1,10 @@
 package types
 
-// interface fromatter
+// Formatter interface fromatter
 type Formatter interface {
-	// Formats a log record.
+	// Format formats a log record.
 	Format(record *Record) error
 
-	// Formats a set of log records.
+	// FormatBatch formats a set of log records.
 	FormatBatch(records []*Record) error
 }

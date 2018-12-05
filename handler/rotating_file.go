@@ -13,13 +13,14 @@ import (
 	"time"
 )
 
+// some rotating date formats
 const (
 	FilePerDay   string = "2006-01-02"
 	FilePerMonth string = "2006-01"
 	FilePerYear  string = "2006"
 )
 
-// Stores logs to files that are rotated every day and a limited number of files are kept.
+// RotatingFile Stores logs to files that are rotated every day and a limited number of files are kept.
 //
 // This rotation is only intended to be used as a workaround. Using logrotate to
 // handle the rotation is strongly encouraged when you can use it.
@@ -35,6 +36,7 @@ type RotatingFile struct {
 	sync.Mutex
 }
 
+// NewRotatingFile New rotatingFile handler
 // level: The minimum logging level at which this handler will be triggered
 // bubble: Whether the messages that are handled can bubble up the stack or not
 // filePerm: Optional file permissions (default (0644) are only for owner read/write)
@@ -52,7 +54,7 @@ func NewRotatingFile(filename string, filePerm os.FileMode, maxFiles, level int,
 	return rf
 }
 
-// Set filename format.
+// SetFilenameFormat Set filename format.
 func (rf *RotatingFile) SetFilenameFormat(filenameFormat, dateFormat string) error {
 	// validate data format
 	match, _ := regexp.MatchString("^2006(([/_.-]?01)([/_.-]?02)?)?$", dateFormat)
@@ -84,7 +86,7 @@ func (rf *RotatingFile) Write(record *types.Record) {
 	rf.File.Write(record)
 }
 
-// Closes the handler.
+// Close the handler.
 func (rf *RotatingFile) Close() {
 	rf.File.Close()
 

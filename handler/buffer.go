@@ -4,6 +4,7 @@ import (
 	"github.com/syyongx/llog/types"
 )
 
+// Buffer struct definition
 type Buffer struct {
 	Handler
 
@@ -12,7 +13,7 @@ type Buffer struct {
 	close   chan bool
 }
 
-// New async handler
+// NewBuffer New async handler
 // bufSize: channel buffer size.
 func NewBuffer(handler types.IHandler, bufSize, level int, bubble bool) *Buffer {
 	buf := &Buffer{
@@ -38,7 +39,7 @@ func NewBuffer(handler types.IHandler, bufSize, level int, bubble bool) *Buffer 
 	return buf
 }
 
-// Handles a record.
+// Handle handles a record.
 func (b *Buffer) Handle(record *types.Record) bool {
 	if !b.IsHandling(record) {
 		return false
@@ -49,14 +50,14 @@ func (b *Buffer) Handle(record *types.Record) bool {
 	return false == b.GetBubble()
 }
 
-// Handles a set of records.
+// HandleBatch Handles a set of records.
 func (b *Buffer) HandleBatch(records []*types.Record) {
 	for _, record := range records {
 		b.Handle(record)
 	}
 }
 
-// close
+// Close close
 func (b *Buffer) Close() {
 	b.records <- nil
 	<-b.close

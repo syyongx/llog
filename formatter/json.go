@@ -4,6 +4,7 @@ import (
 	"github.com/syyongx/llog/types"
 )
 
+// DefaultFields for a log record
 var DefaultFields = []string{
 	"Datetime",
 	"Channel",
@@ -13,31 +14,33 @@ var DefaultFields = []string{
 	"Extra",
 }
 
-type Json struct {
+// JSON struct definition
+type JSON struct {
 	Normalizer
 
 	fileds        []string
 	appendNewline bool
 }
 
-// appendNewline: Is append new line.
-func NewJson(fields []string, appendNewline bool) *Json {
+// NewJSON appendNewline: Is append new line.
+func NewJSON(fields []string, appendNewline bool) *JSON {
 	if fields == nil {
 		fields = DefaultFields
 	}
-	j := &Json{
+	j := &JSON{
 		fileds:        fields,
 		appendNewline: appendNewline,
 	}
 	return j
 }
 
-func (j *Json) IsAppendNewLine() bool {
+// IsAppendNewLine is append new line
+func (j *JSON) IsAppendNewLine() bool {
 	return j.appendNewline
 }
 
 // Format a record
-func (j *Json) Format(record *types.Record) error {
+func (j *JSON) Format(record *types.Record) error {
 	output := make(map[string]string, len(j.fileds))
 	for _, field := range j.fileds {
 		switch field {
@@ -57,15 +60,15 @@ func (j *Json) Format(record *types.Record) error {
 			output[field] = "unknow"
 		}
 	}
-	record.Formatted.Write(j.Json(output))
+	record.Formatted.Write(j.JSON(output))
 	if j.appendNewline {
 		record.Formatted.WriteRune('\n')
 	}
 	return nil
 }
 
-// Format batch record
-func (j *Json) FormatBatch(records []*types.Record) error {
+// FormatBatch Format batch record
+func (j *JSON) FormatBatch(records []*types.Record) error {
 	for _, record := range records {
 		err := j.Format(record)
 		if err != nil {

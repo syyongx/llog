@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Mail handler struct definition
 type Mail struct {
 	Processing
 
@@ -22,6 +23,7 @@ type Mail struct {
 	auth        smtp.Auth
 }
 
+// NewMail new mail handler
 func NewMail(address, username, password, from, subject string, to []string, level int, bubble bool) *Mail {
 	auth := smtp.PlainAuth(
 		"",
@@ -60,12 +62,12 @@ func (m *Mail) Write(record *types.Record) {
 	}
 }
 
-// Set the content type of the email - Defaults to text/plain. Use text/html for HTML
+// SetContentType Set the content type of the email - Defaults to text/plain. Use text/html for HTML
 func (m *Mail) SetContentType(contentType string) {
 	m.contentType = contentType
 }
 
-// Get the content type of the email - Defaults to text/plain. Use text/html for HTML
+// ContentType Get the content type of the email - Defaults to text/plain. Use text/html for HTML
 func (m *Mail) ContentType() string {
 	if m.contentType == "" {
 		return "text/plain"
@@ -73,12 +75,12 @@ func (m *Mail) ContentType() string {
 	return m.contentType
 }
 
-// Set the encoding for the message - Defaults to UTF-8
+// SetEncoding Set the encoding for the message - Defaults to UTF-8
 func (m *Mail) SetEncoding(encoding string) {
 	m.encoding = encoding
 }
 
-// Get the encoding for the message - Defaults to UTF-8
+// Encoding Get the encoding for the message - Defaults to UTF-8
 func (m *Mail) Encoding() string {
 	if m.encoding == "" {
 		return "UTF-8"
