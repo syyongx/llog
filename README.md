@@ -18,6 +18,8 @@ go get github.com/syyongx/llog
 ## Usage
 
 ```go
+package main
+
 import (
 	"github.com/syyongx/llog"
 	"github.com/syyongx/llog/handler"

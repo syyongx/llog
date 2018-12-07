@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/syyongx/llog/types"
+	"strings"
 	"time"
 )
 
@@ -144,6 +145,19 @@ func (l *Logger) GetLevelName(level int) (string, error) {
 	return "", errors.New("level is not defined")
 }
 
+// GetLevelByName Gets the value by the logging level name.
+func (l *Logger) GetLevelByName(levelName string) (int, error) {
+	levelName = strings.ToLower(levelName)
+
+	for val, name := range l.levels {
+		if name == levelName {
+			return val, nil
+		}
+	}
+
+	return 0, errors.New("level is not defined")
+}
+
 // IsHandling Checks whether the Logger has a handler that listens on the given level.
 func (l *Logger) IsHandling(level int) bool {
 	return true
@@ -152,7 +166,7 @@ func (l *Logger) IsHandling(level int) bool {
 // Log Logs with an arbitrary level.
 func (l *Logger) Log(level int, message string) {
 	if _, ok := l.levels[level]; !ok {
-		//
+		return
 	}
 
 	l.AddRecord(level, message)
