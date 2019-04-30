@@ -91,7 +91,7 @@ func (rf *RotatingFile) Close() {
 	rf.File.Close()
 
 	if rf.mustRotate {
-		// do ratate
+		// do rotate
 		rf.rotate()
 	}
 }
@@ -108,7 +108,7 @@ func (rf *RotatingFile) rotate() error {
 		return nil
 	}
 	// async remove old files.
-	go rf.removeOldLogs()
+	go rf.removeOldLogFiles()
 
 	rf.mustRotate = false
 	return nil
@@ -151,8 +151,8 @@ func (rf *RotatingFile) day(t time.Time) int {
 	return day
 }
 
-// Remove old logs.
-func (rf *RotatingFile) removeOldLogs() {
+// Remove old log files.
+func (rf *RotatingFile) removeOldLogFiles() {
 	files, err := filepath.Glob(rf.globPattern())
 	if err != nil {
 		return

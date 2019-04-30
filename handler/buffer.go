@@ -24,6 +24,7 @@ func NewBuffer(handler types.IHandler, bufSize, level int, bubble bool) *Buffer 
 	buf.SetLevel(level)
 	buf.SetBubble(bubble)
 
+	// async
 	go func() {
 		for {
 			record := <-buf.records

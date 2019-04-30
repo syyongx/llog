@@ -95,7 +95,7 @@ func (l *Logger) GetProcessor() []types.Processor {
 }
 
 // AddRecord Adds a log record.
-func (l *Logger) AddRecord(level int, message string) (bool, error) {
+func (l *Logger) AddRecord(level int, message string) bool {
 	hKey := -1
 	record := types.GetRecord()
 	defer types.ReleaseRecord(record)
@@ -106,11 +106,12 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 		}
 	}
 	if hKey == -1 {
-		return false, nil
+		return false
 	}
 	levelName, err := l.GetLevelName(level)
 	if err != nil {
-		return false, err
+		// ignore errors
+		return false
 	}
 	record.Message = message
 	record.LevelName = levelName
@@ -129,7 +130,7 @@ func (l *Logger) AddRecord(level int, message string) (bool, error) {
 		}
 	}
 
-	return true, nil
+	return true
 }
 
 // GetLevels Gets all supported logging levels.
@@ -221,7 +222,7 @@ func (l *Logger) GetTimezone(tz string) string {
 	return l.timezone
 }
 
-// String Stringfy
+// String Stringify
 func (l *Logger) String(data interface{}) string {
 	switch data.(type) {
 	case string:
