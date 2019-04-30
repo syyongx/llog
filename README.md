@@ -2,6 +2,10 @@
 
 [![GoDoc](https://godoc.org/github.com/syyongx/llog?status.svg)](https://godoc.org/github.com/syyongx/llog)
 [![Go Report Card](https://goreportcard.com/badge/github.com/syyongx/llog)](https://goreportcard.com/report/github.com/syyongx/llog)
+[![MIT licensed][3]][4]
+
+[3]: https://img.shields.io/badge/license-MIT-blue.svg
+[4]: LICENSE
 
 llog - Monolog implementation in Go.
 
