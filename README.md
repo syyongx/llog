@@ -7,7 +7,7 @@
 [3]: https://img.shields.io/badge/license-MIT-blue.svg
 [4]: LICENSE
 
-llog - Monolog implementation in Go.
+LLog - Monolog implementation in Go.
 
 ## GoDoc
 
