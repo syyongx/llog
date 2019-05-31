@@ -1,4 +1,4 @@
-# llog
+# LLog
 
 [![GoDoc](https://godoc.org/github.com/syyongx/llog?status.svg)](https://godoc.org/github.com/syyongx/llog)
 [![Go Report Card](https://goreportcard.com/badge/github.com/syyongx/llog)](https://goreportcard.com/report/github.com/syyongx/llog)
@@ -52,4 +52,4 @@ func main() {
 
 ## LICENSE
 
-llog source code is licensed under the [MIT](LICENSE) Licence.
+LLog source code is licensed under the [MIT](LICENSE) Licence.
