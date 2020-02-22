@@ -31,7 +31,8 @@ import (
 	"github.com/syyongx/llog/types"
 )
 
-func main() {
+func main() 
+	// New logger{
 	logger := NewLogger("my-log")
 
 	file := handler.NewFile("/tmp/llog/go.log", 0664, types.WARNING, true)
